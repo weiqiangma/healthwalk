@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pertech.healthwalk.base.dao.UserDao">
+
+    <resultMap type="cn.pertech.healthwalk.base.entity.User" id="UserResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="teamId" column="team_id" jdbcType="INTEGER"/>
+        <result property="openId" column="open_id" jdbcType="VARCHAR"/>
+        <result property="unionId" column="union_id" jdbcType="VARCHAR"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="avatarUrl" column="avatar_url" jdbcType="VARCHAR"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="teamName" column="team_name" jdbcType="VARCHAR"/>
+        <result property="teamNo" column="team_no" jdbcType="VARCHAR"/>
+        <result property="todayStep" column="today_step" jdbcType="INTEGER"/>
+        <result property="todayRank" column="today_rank" jdbcType="INTEGER"/>
+        <result property="integral" column="integral" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="table_field">
+      id, team_id, open_id, union_id, user_name, avatar_url, mobile, team_name, team_no, today_step, today_rank, integral, status, update_time, create_time      
+    </sql>
+       
+    <!--通过Id查询单个-->
+    <select id="getById" resultMap="UserResultMap" parameterType="java.lang.Long">
+        select
+          <include refid="table_field" />
+        from user
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
+    <!--通过实体不为空的属性作为筛选条件查询列表-->
+    <select id="listByEntity" resultMap="UserResultMap" parameterType="cn.pertech.healthwalk.base.entity.User">
+        select
+          <include refid="table_field" />
+        from user
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="teamId != null">
+                and team_id = #{teamId,jdbcType=INTEGER}
+            </if>
+            <if test="openId != null">
+                and open_id = #{openId,jdbcType=VARCHAR}
+            </if>
+            <if test="unionId != null">
+                and union_id = #{unionId,jdbcType=VARCHAR}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="avatarUrl != null">
+                and avatar_url = #{avatarUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="mobile != null">
+                and mobile = #{mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="teamName != null">
+                and team_name = #{teamName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamNo != null">
+                and team_no = #{teamNo,jdbcType=VARCHAR}
+            </if>
+            <if test="todayStep != null">
+                and today_step = #{todayStep,jdbcType=INTEGER}
+            </if>
+            <if test="todayRank != null">
+                and today_rank = #{todayRank,jdbcType=INTEGER}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体不为空的属性作为筛选条件查询单个-->
+    <select id="getByEntity" resultMap="UserResultMap" parameterType="cn.pertech.healthwalk.base.entity.User">
+        select
+          <include refid="table_field" />
+        from user
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="teamId != null">
+                and team_id = #{teamId,jdbcType=INTEGER}
+            </if>
+            <if test="openId != null">
+                and open_id = #{openId,jdbcType=VARCHAR}
+            </if>
+            <if test="unionId != null">
+                and union_id = #{unionId,jdbcType=VARCHAR}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="avatarUrl != null">
+                and avatar_url = #{avatarUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="mobile != null">
+                and mobile = #{mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="teamName != null">
+                and team_name = #{teamName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamNo != null">
+                and team_no = #{teamNo,jdbcType=VARCHAR}
+            </if>
+            <if test="todayStep != null">
+                and today_step = #{todayStep,jdbcType=INTEGER}
+            </if>
+            <if test="todayRank != null">
+                and today_rank = #{todayRank,jdbcType=INTEGER}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <!--通过Id列表作为筛选条件查询列表，列表长度不为0-->
+    <select id="listByIds" resultMap="UserResultMap" parameterType="list">
+        select
+          <include refid="table_field" />
+        from user
+        where id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--新增实体属性不为null的列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true" parameterType="cn.pertech.healthwalk.base.entity.User">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+          <if test="id != null">
+             id,
+          </if>
+          <if test="teamId != null">
+             team_id,
+          </if>
+          <if test="openId != null">
+             open_id,
+          </if>
+          <if test="unionId != null">
+             union_id,
+          </if>
+          <if test="userName != null">
+             user_name,
+          </if>
+          <if test="avatarUrl != null">
+             avatar_url,
+          </if>
+          <if test="mobile != null">
+             mobile,
+          </if>
+          <if test="teamName != null">
+             team_name,
+          </if>
+          <if test="teamNo != null">
+             team_no,
+          </if>
+          <if test="todayStep != null">
+             today_step,
+          </if>
+          <if test="todayRank != null">
+             today_rank,
+          </if>
+          <if test="integral != null">
+             integral,
+          </if>
+          <if test="status != null">
+             status,
+          </if>
+          <if test="updateTime != null">
+             update_time,
+          </if>
+          <if test="createTime != null">
+             create_time,
+          </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+          <if test="id != null">
+             #{id,jdbcType=INTEGER},
+          </if>
+          <if test="teamId != null">
+             #{teamId,jdbcType=INTEGER},
+          </if>
+          <if test="openId != null">
+             #{openId,jdbcType=VARCHAR},
+          </if>
+          <if test="unionId != null">
+             #{unionId,jdbcType=VARCHAR},
+          </if>
+          <if test="userName != null">
+             #{userName,jdbcType=VARCHAR},
+          </if>
+          <if test="avatarUrl != null">
+             #{avatarUrl,jdbcType=VARCHAR},
+          </if>
+          <if test="mobile != null">
+             #{mobile,jdbcType=VARCHAR},
+          </if>
+          <if test="teamName != null">
+             #{teamName,jdbcType=VARCHAR},
+          </if>
+          <if test="teamNo != null">
+             #{teamNo,jdbcType=VARCHAR},
+          </if>
+          <if test="todayStep != null">
+             #{todayStep,jdbcType=INTEGER},
+          </if>
+          <if test="todayRank != null">
+             #{todayRank,jdbcType=INTEGER},
+          </if>
+          <if test="integral != null">
+             #{integral,jdbcType=INTEGER},
+          </if>
+          <if test="status != null">
+             #{status,jdbcType=INTEGER},
+          </if>
+          <if test="updateTime != null">
+             #{updateTime,jdbcType=TIMESTAMP},
+          </if>
+          <if test="createTime != null">
+             #{createTime,jdbcType=TIMESTAMP},
+          </if>
+        </trim>
+    </insert>
+
+    <!--批量新增所有列，列表长度不能为0，且列表id统一为null或者统一不为null-->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true" parameterType="list">
+        insert into user
+         (id, team_id, open_id, union_id, user_name, avatar_url, mobile, team_name, team_no, today_step, today_rank, integral, status, update_time, create_time)
+        values
+        <foreach item="item" collection="list" separator="," open="" close="" index="index">
+         (#{item.id,jdbcType=INTEGER}, #{item.teamId,jdbcType=INTEGER}, #{item.openId,jdbcType=VARCHAR}, #{item.unionId,jdbcType=VARCHAR}, #{item.userName,jdbcType=VARCHAR}, #{item.avatarUrl,jdbcType=VARCHAR}, #{item.mobile,jdbcType=VARCHAR}, #{item.teamName,jdbcType=VARCHAR}, #{item.teamNo,jdbcType=VARCHAR}, #{item.todayStep,jdbcType=INTEGER}, #{item.todayRank,jdbcType=INTEGER}, #{item.integral,jdbcType=INTEGER}, #{item.status,jdbcType=INTEGER}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.createTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+    <!--通过主键修改实体属性不为null的列-->
+    <update id="update" parameterType="cn.pertech.healthwalk.base.entity.User">
+        update user
+        <set>
+            <if test="teamId != null">
+                team_id = #{teamId,jdbcType=INTEGER},
+            </if>
+            <if test="openId != null and openId != ''">
+                open_id = #{openId,jdbcType=VARCHAR},
+            </if>
+            <if test="unionId != null and unionId != ''">
+                union_id = #{unionId,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="avatarUrl != null and avatarUrl != ''">
+                avatar_url = #{avatarUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="teamName != null and teamName != ''">
+                team_name = #{teamName,jdbcType=VARCHAR},
+            </if>
+            <if test="teamNo != null and teamNo != ''">
+                team_no = #{teamNo,jdbcType=VARCHAR},
+            </if>
+            <if test="todayStep != null">
+                today_step = #{todayStep,jdbcType=INTEGER},
+            </if>
+            <if test="todayRank != null">
+                today_rank = #{todayRank,jdbcType=INTEGER},
+            </if>
+            <if test="integral != null">
+                integral = #{integral,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--通过表字段修改实体属性不为null的列-->
+    <update id="updateByField">
+        update user
+        <set>
+            <if test="where.teamId == null and set.teamId != null">
+                team_id = #{set.teamId,jdbcType=INTEGER},
+            </if>
+            <if test="where.openId == null and set.openId != null and set.openId != ''">
+                open_id = #{set.openId,jdbcType=VARCHAR},
+            </if>
+            <if test="where.unionId == null and set.unionId != null and set.unionId != ''">
+                union_id = #{set.unionId,jdbcType=VARCHAR},
+            </if>
+            <if test="where.userName == null and set.userName != null and set.userName != ''">
+                user_name = #{set.userName,jdbcType=VARCHAR},
+            </if>
+            <if test="where.avatarUrl == null and set.avatarUrl != null and set.avatarUrl != ''">
+                avatar_url = #{set.avatarUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="where.mobile == null and set.mobile != null and set.mobile != ''">
+                mobile = #{set.mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="where.teamName == null and set.teamName != null and set.teamName != ''">
+                team_name = #{set.teamName,jdbcType=VARCHAR},
+            </if>
+            <if test="where.teamNo == null and set.teamNo != null and set.teamNo != ''">
+                team_no = #{set.teamNo,jdbcType=VARCHAR},
+            </if>
+            <if test="where.todayStep == null and set.todayStep != null">
+                today_step = #{set.todayStep,jdbcType=INTEGER},
+            </if>
+            <if test="where.todayRank == null and set.todayRank != null">
+                today_rank = #{set.todayRank,jdbcType=INTEGER},
+            </if>
+            <if test="where.integral == null and set.integral != null">
+                integral = #{set.integral,jdbcType=INTEGER},
+            </if>
+            <if test="where.status == null and set.status != null">
+                status = #{set.status,jdbcType=INTEGER},
+            </if>
+            <if test="where.updateTime == null and set.updateTime != null">
+                update_time = #{set.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="where.createTime == null and set.createTime != null">
+                create_time = #{set.createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <where>
+            <if test="where.id != null">
+                and id = #{where.id,jdbcType=INTEGER}
+            </if>
+            <if test="where.teamId != null">
+                and team_id = #{where.teamId,jdbcType=INTEGER}
+            </if>
+            <if test="where.openId != null">
+                and open_id = #{where.openId,jdbcType=VARCHAR}
+            </if>
+            <if test="where.unionId != null">
+                and union_id = #{where.unionId,jdbcType=VARCHAR}
+            </if>
+            <if test="where.userName != null">
+                and user_name = #{where.userName,jdbcType=VARCHAR}
+            </if>
+            <if test="where.avatarUrl != null">
+                and avatar_url = #{where.avatarUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="where.mobile != null">
+                and mobile = #{where.mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="where.teamName != null">
+                and team_name = #{where.teamName,jdbcType=VARCHAR}
+            </if>
+            <if test="where.teamNo != null">
+                and team_no = #{where.teamNo,jdbcType=VARCHAR}
+            </if>
+            <if test="where.todayStep != null">
+                and today_step = #{where.todayStep,jdbcType=INTEGER}
+            </if>
+            <if test="where.todayRank != null">
+                and today_rank = #{where.todayRank,jdbcType=INTEGER}
+            </if>
+            <if test="where.integral != null">
+                and integral = #{where.integral,jdbcType=INTEGER}
+            </if>
+            <if test="where.status != null">
+                and status = #{where.status,jdbcType=INTEGER}
+            </if>
+            <if test="where.updateTime != null">
+                and update_time = #{where.updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="where.createTime != null">
+                and create_time = #{where.createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </update>
+
+    <!--通过主键修改实体列表，列表长度不能为0，注意：当实体属性为null时，对应的列也会别更新为null-->
+    <update id="updateBatch" parameterType="list">
+        update user
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="team_id = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.teamId}
+                 </foreach>
+            </trim>
+            <trim prefix="open_id = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.openId}
+                 </foreach>
+            </trim>
+            <trim prefix="union_id = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.unionId}
+                 </foreach>
+            </trim>
+            <trim prefix="user_name = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.userName}
+                 </foreach>
+            </trim>
+            <trim prefix="avatar_url = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.avatarUrl}
+                 </foreach>
+            </trim>
+            <trim prefix="mobile = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.mobile}
+                 </foreach>
+            </trim>
+            <trim prefix="team_name = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.teamName}
+                 </foreach>
+            </trim>
+            <trim prefix="team_no = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.teamNo}
+                 </foreach>
+            </trim>
+            <trim prefix="today_step = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.todayStep}
+                 </foreach>
+            </trim>
+            <trim prefix="today_rank = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.todayRank}
+                 </foreach>
+            </trim>
+            <trim prefix="integral = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.integral}
+                 </foreach>
+            </trim>
+            <trim prefix="status = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.status}
+                 </foreach>
+            </trim>
+            <trim prefix="update_time = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.updateTime}
+                 </foreach>
+            </trim>
+            <trim prefix="create_time = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.createTime}
+                 </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+    
+    <!--通过主键删除-->
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from user where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--通过实体非空属性删除-->
+    <delete id="deleteByEntity" parameterType="cn.pertech.healthwalk.base.entity.User">
+        delete from user
+        <where>
+            <if test="teamId != null">
+                and team_id = #{teamId,jdbcType=INTEGER}
+            </if>
+            <if test="openId != null">
+                and open_id = #{openId,jdbcType=VARCHAR}
+            </if>
+            <if test="unionId != null">
+                and union_id = #{unionId,jdbcType=VARCHAR}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="avatarUrl != null">
+                and avatar_url = #{avatarUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="mobile != null">
+                and mobile = #{mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="teamName != null">
+                and team_name = #{teamName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamNo != null">
+                and team_no = #{teamNo,jdbcType=VARCHAR}
+            </if>
+            <if test="todayStep != null">
+                and today_step = #{todayStep,jdbcType=INTEGER}
+            </if>
+            <if test="todayRank != null">
+                and today_rank = #{todayRank,jdbcType=INTEGER}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </delete>
+    
+    <!--通过主键列表删除，列表长度不能为0-->
+    <delete id="deleteByIds" parameterType="list">
+        delete from user where id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </delete>
+    
+    <select id="countAll" resultType="int">
+        select count(id) from user
+    </select>
+    
+    <select id="countByEntity" parameterType="cn.pertech.healthwalk.base.entity.User" resultType="int">
+        select count(id) from user
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="teamId != null">
+                and team_id = #{teamId,jdbcType=INTEGER}
+            </if>
+            <if test="openId != null">
+                and open_id = #{openId,jdbcType=VARCHAR}
+            </if>
+            <if test="unionId != null">
+                and union_id = #{unionId,jdbcType=VARCHAR}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="avatarUrl != null">
+                and avatar_url = #{avatarUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="mobile != null">
+                and mobile = #{mobile,jdbcType=VARCHAR}
+            </if>
+            <if test="teamName != null">
+                and team_name = #{teamName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamNo != null">
+                and team_no = #{teamNo,jdbcType=VARCHAR}
+            </if>
+            <if test="todayStep != null">
+                and today_step = #{todayStep,jdbcType=INTEGER}
+            </if>
+            <if test="todayRank != null">
+                and today_rank = #{todayRank,jdbcType=INTEGER}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="status != null">
+                and status = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+</mapper>

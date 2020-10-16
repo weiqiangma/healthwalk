@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pertech.healthwalk.base.dao.IntegralLogDao">
+
+    <resultMap type="cn.pertech.healthwalk.base.entity.IntegralLog" id="IntegralLogResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="integral" column="integral" jdbcType="INTEGER"/>
+        <result property="residueIntegral" column="residue_integral" jdbcType="INTEGER"/>
+        <result property="walkSteps" column="walk_steps" jdbcType="INTEGER"/>
+        <result property="walkLevel" column="walk_level" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="isSynchronized" column="is_synchronized" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="table_field">
+      id, user_id, user_name, integral, residue_integral, walk_steps, walk_level, create_time, is_synchronized      
+    </sql>
+       
+    <!--通过Id查询单个-->
+    <select id="getById" resultMap="IntegralLogResultMap" parameterType="java.lang.Long">
+        select
+          <include refid="table_field" />
+        from integral_log
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
+    <!--通过实体不为空的属性作为筛选条件查询列表-->
+    <select id="listByEntity" resultMap="IntegralLogResultMap" parameterType="cn.pertech.healthwalk.base.entity.IntegralLog">
+        select
+          <include refid="table_field" />
+        from integral_log
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="residueIntegral != null">
+                and residue_integral = #{residueIntegral,jdbcType=INTEGER}
+            </if>
+            <if test="walkSteps != null">
+                and walk_steps = #{walkSteps,jdbcType=INTEGER}
+            </if>
+            <if test="walkLevel != null">
+                and walk_level = #{walkLevel,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="isSynchronized != null">
+                and is_synchronized = #{isSynchronized,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体不为空的属性作为筛选条件查询单个-->
+    <select id="getByEntity" resultMap="IntegralLogResultMap" parameterType="cn.pertech.healthwalk.base.entity.IntegralLog">
+        select
+          <include refid="table_field" />
+        from integral_log
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="residueIntegral != null">
+                and residue_integral = #{residueIntegral,jdbcType=INTEGER}
+            </if>
+            <if test="walkSteps != null">
+                and walk_steps = #{walkSteps,jdbcType=INTEGER}
+            </if>
+            <if test="walkLevel != null">
+                and walk_level = #{walkLevel,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="isSynchronized != null">
+                and is_synchronized = #{isSynchronized,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <!--通过Id列表作为筛选条件查询列表，列表长度不为0-->
+    <select id="listByIds" resultMap="IntegralLogResultMap" parameterType="list">
+        select
+          <include refid="table_field" />
+        from integral_log
+        where id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--新增实体属性不为null的列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true" parameterType="cn.pertech.healthwalk.base.entity.IntegralLog">
+        insert into integral_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+          <if test="id != null">
+             id,
+          </if>
+          <if test="userId != null">
+             user_id,
+          </if>
+          <if test="userName != null">
+             user_name,
+          </if>
+          <if test="integral != null">
+             integral,
+          </if>
+          <if test="residueIntegral != null">
+             residue_integral,
+          </if>
+          <if test="walkSteps != null">
+             walk_steps,
+          </if>
+          <if test="walkLevel != null">
+             walk_level,
+          </if>
+          <if test="createTime != null">
+             create_time,
+          </if>
+          <if test="isSynchronized != null">
+             is_synchronized,
+          </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+          <if test="id != null">
+             #{id,jdbcType=INTEGER},
+          </if>
+          <if test="userId != null">
+             #{userId,jdbcType=INTEGER},
+          </if>
+          <if test="userName != null">
+             #{userName,jdbcType=VARCHAR},
+          </if>
+          <if test="integral != null">
+             #{integral,jdbcType=INTEGER},
+          </if>
+          <if test="residueIntegral != null">
+             #{residueIntegral,jdbcType=INTEGER},
+          </if>
+          <if test="walkSteps != null">
+             #{walkSteps,jdbcType=INTEGER},
+          </if>
+          <if test="walkLevel != null">
+             #{walkLevel,jdbcType=VARCHAR},
+          </if>
+          <if test="createTime != null">
+             #{createTime,jdbcType=TIMESTAMP},
+          </if>
+          <if test="isSynchronized != null">
+             #{isSynchronized,jdbcType=INTEGER},
+          </if>
+        </trim>
+    </insert>
+
+    <!--批量新增所有列，列表长度不能为0，且列表id统一为null或者统一不为null-->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true" parameterType="list">
+        insert into integral_log
+         (id, user_id, user_name, integral, residue_integral, walk_steps, walk_level, create_time, is_synchronized)
+        values
+        <foreach item="item" collection="list" separator="," open="" close="" index="index">
+         (#{item.id,jdbcType=INTEGER}, #{item.userId,jdbcType=INTEGER}, #{item.userName,jdbcType=VARCHAR}, #{item.integral,jdbcType=INTEGER}, #{item.residueIntegral,jdbcType=INTEGER}, #{item.walkSteps,jdbcType=INTEGER}, #{item.walkLevel,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.isSynchronized,jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <!--通过主键修改实体属性不为null的列-->
+    <update id="update" parameterType="cn.pertech.healthwalk.base.entity.IntegralLog">
+        update integral_log
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="integral != null">
+                integral = #{integral,jdbcType=INTEGER},
+            </if>
+            <if test="residueIntegral != null">
+                residue_integral = #{residueIntegral,jdbcType=INTEGER},
+            </if>
+            <if test="walkSteps != null">
+                walk_steps = #{walkSteps,jdbcType=INTEGER},
+            </if>
+            <if test="walkLevel != null and walkLevel != ''">
+                walk_level = #{walkLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isSynchronized != null">
+                is_synchronized = #{isSynchronized,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--通过表字段修改实体属性不为null的列-->
+    <update id="updateByField">
+        update integral_log
+        <set>
+            <if test="where.userId == null and set.userId != null">
+                user_id = #{set.userId,jdbcType=INTEGER},
+            </if>
+            <if test="where.userName == null and set.userName != null and set.userName != ''">
+                user_name = #{set.userName,jdbcType=VARCHAR},
+            </if>
+            <if test="where.integral == null and set.integral != null">
+                integral = #{set.integral,jdbcType=INTEGER},
+            </if>
+            <if test="where.residueIntegral == null and set.residueIntegral != null">
+                residue_integral = #{set.residueIntegral,jdbcType=INTEGER},
+            </if>
+            <if test="where.walkSteps == null and set.walkSteps != null">
+                walk_steps = #{set.walkSteps,jdbcType=INTEGER},
+            </if>
+            <if test="where.walkLevel == null and set.walkLevel != null and set.walkLevel != ''">
+                walk_level = #{set.walkLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="where.createTime == null and set.createTime != null">
+                create_time = #{set.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="where.isSynchronized == null and set.isSynchronized != null">
+                is_synchronized = #{set.isSynchronized,jdbcType=INTEGER},
+            </if>
+        </set>
+        <where>
+            <if test="where.id != null">
+                and id = #{where.id,jdbcType=INTEGER}
+            </if>
+            <if test="where.userId != null">
+                and user_id = #{where.userId,jdbcType=INTEGER}
+            </if>
+            <if test="where.userName != null">
+                and user_name = #{where.userName,jdbcType=VARCHAR}
+            </if>
+            <if test="where.integral != null">
+                and integral = #{where.integral,jdbcType=INTEGER}
+            </if>
+            <if test="where.residueIntegral != null">
+                and residue_integral = #{where.residueIntegral,jdbcType=INTEGER}
+            </if>
+            <if test="where.walkSteps != null">
+                and walk_steps = #{where.walkSteps,jdbcType=INTEGER}
+            </if>
+            <if test="where.walkLevel != null">
+                and walk_level = #{where.walkLevel,jdbcType=VARCHAR}
+            </if>
+            <if test="where.createTime != null">
+                and create_time = #{where.createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="where.isSynchronized != null">
+                and is_synchronized = #{where.isSynchronized,jdbcType=INTEGER}
+            </if>
+        </where>
+    </update>
+
+    <!--通过主键修改实体列表，列表长度不能为0，注意：当实体属性为null时，对应的列也会别更新为null-->
+    <update id="updateBatch" parameterType="list">
+        update integral_log
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="user_id = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.userId}
+                 </foreach>
+            </trim>
+            <trim prefix="user_name = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.userName}
+                 </foreach>
+            </trim>
+            <trim prefix="integral = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.integral}
+                 </foreach>
+            </trim>
+            <trim prefix="residue_integral = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.residueIntegral}
+                 </foreach>
+            </trim>
+            <trim prefix="walk_steps = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.walkSteps}
+                 </foreach>
+            </trim>
+            <trim prefix="walk_level = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.walkLevel}
+                 </foreach>
+            </trim>
+            <trim prefix="create_time = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.createTime}
+                 </foreach>
+            </trim>
+            <trim prefix="is_synchronized = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.isSynchronized}
+                 </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+    
+    <!--通过主键删除-->
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from integral_log where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--通过实体非空属性删除-->
+    <delete id="deleteByEntity" parameterType="cn.pertech.healthwalk.base.entity.IntegralLog">
+        delete from integral_log
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="residueIntegral != null">
+                and residue_integral = #{residueIntegral,jdbcType=INTEGER}
+            </if>
+            <if test="walkSteps != null">
+                and walk_steps = #{walkSteps,jdbcType=INTEGER}
+            </if>
+            <if test="walkLevel != null">
+                and walk_level = #{walkLevel,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="isSynchronized != null">
+                and is_synchronized = #{isSynchronized,jdbcType=INTEGER}
+            </if>
+        </where>
+    </delete>
+    
+    <!--通过主键列表删除，列表长度不能为0-->
+    <delete id="deleteByIds" parameterType="list">
+        delete from integral_log where id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </delete>
+    
+    <select id="countAll" resultType="int">
+        select count(id) from integral_log
+    </select>
+    
+    <select id="countByEntity" parameterType="cn.pertech.healthwalk.base.entity.IntegralLog" resultType="int">
+        select count(id) from integral_log
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="residueIntegral != null">
+                and residue_integral = #{residueIntegral,jdbcType=INTEGER}
+            </if>
+            <if test="walkSteps != null">
+                and walk_steps = #{walkSteps,jdbcType=INTEGER}
+            </if>
+            <if test="walkLevel != null">
+                and walk_level = #{walkLevel,jdbcType=VARCHAR}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="isSynchronized != null">
+                and is_synchronized = #{isSynchronized,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+</mapper>

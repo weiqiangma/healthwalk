@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pertech.healthwalk.base.dao.WalkLogDao">
+
+    <resultMap type="cn.pertech.healthwalk.base.entity.WalkLog" id="WalkLogResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="teamId" column="team_id" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="teamName" column="team_name" jdbcType="VARCHAR"/>
+        <result property="teamNo" column="team_no" jdbcType="VARCHAR"/>
+        <result property="totalSteps" column="total_steps" jdbcType="INTEGER"/>
+        <result property="totalDistance" column="total_distance" jdbcType="INTEGER"/>
+        <result property="totalTime" column="total_time" jdbcType="OTHER"/>
+        <result property="integral" column="integral" jdbcType="INTEGER"/>
+        <result property="isDraw" column="is_draw" jdbcType="VARCHAR"/>
+        <result property="startSteps" column="start_steps" jdbcType="INTEGER"/>
+        <result property="endSteps" column="end_steps" jdbcType="INTEGER"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="table_field">
+      id, user_id, team_id, user_name, team_name, team_no, total_steps, total_distance, total_time, integral, is_draw, start_steps, end_steps, start_time, update_time, create_time      
+    </sql>
+       
+    <!--通过Id查询单个-->
+    <select id="getById" resultMap="WalkLogResultMap" parameterType="java.lang.Long">
+        select
+          <include refid="table_field" />
+        from walk_log
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+
+    <!--通过实体不为空的属性作为筛选条件查询列表-->
+    <select id="listByEntity" resultMap="WalkLogResultMap" parameterType="cn.pertech.healthwalk.base.entity.WalkLog">
+        select
+          <include refid="table_field" />
+        from walk_log
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="teamId != null">
+                and team_id = #{teamId,jdbcType=INTEGER}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamName != null">
+                and team_name = #{teamName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamNo != null">
+                and team_no = #{teamNo,jdbcType=VARCHAR}
+            </if>
+            <if test="totalSteps != null">
+                and total_steps = #{totalSteps,jdbcType=INTEGER}
+            </if>
+            <if test="totalDistance != null">
+                and total_distance = #{totalDistance,jdbcType=INTEGER}
+            </if>
+            <if test="totalTime != null">
+                and total_time = #{totalTime,jdbcType=OTHER}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="isDraw != null">
+                and is_draw = #{isDraw,jdbcType=VARCHAR}
+            </if>
+            <if test="startSteps != null">
+                and start_steps = #{startSteps,jdbcType=INTEGER}
+            </if>
+            <if test="endSteps != null">
+                and end_steps = #{endSteps,jdbcType=INTEGER}
+            </if>
+            <if test="startTime != null">
+                and start_time = #{startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体不为空的属性作为筛选条件查询单个-->
+    <select id="getByEntity" resultMap="WalkLogResultMap" parameterType="cn.pertech.healthwalk.base.entity.WalkLog">
+        select
+          <include refid="table_field" />
+        from walk_log
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="teamId != null">
+                and team_id = #{teamId,jdbcType=INTEGER}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamName != null">
+                and team_name = #{teamName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamNo != null">
+                and team_no = #{teamNo,jdbcType=VARCHAR}
+            </if>
+            <if test="totalSteps != null">
+                and total_steps = #{totalSteps,jdbcType=INTEGER}
+            </if>
+            <if test="totalDistance != null">
+                and total_distance = #{totalDistance,jdbcType=INTEGER}
+            </if>
+            <if test="totalTime != null">
+                and total_time = #{totalTime,jdbcType=OTHER}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="isDraw != null">
+                and is_draw = #{isDraw,jdbcType=VARCHAR}
+            </if>
+            <if test="startSteps != null">
+                and start_steps = #{startSteps,jdbcType=INTEGER}
+            </if>
+            <if test="endSteps != null">
+                and end_steps = #{endSteps,jdbcType=INTEGER}
+            </if>
+            <if test="startTime != null">
+                and start_time = #{startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+    <!--通过Id列表作为筛选条件查询列表，列表长度不为0-->
+    <select id="listByIds" resultMap="WalkLogResultMap" parameterType="list">
+        select
+          <include refid="table_field" />
+        from walk_log
+        where id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--新增实体属性不为null的列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true" parameterType="cn.pertech.healthwalk.base.entity.WalkLog">
+        insert into walk_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+          <if test="id != null">
+             id,
+          </if>
+          <if test="userId != null">
+             user_id,
+          </if>
+          <if test="teamId != null">
+             team_id,
+          </if>
+          <if test="userName != null">
+             user_name,
+          </if>
+          <if test="teamName != null">
+             team_name,
+          </if>
+          <if test="teamNo != null">
+             team_no,
+          </if>
+          <if test="totalSteps != null">
+             total_steps,
+          </if>
+          <if test="totalDistance != null">
+             total_distance,
+          </if>
+          <if test="totalTime != null">
+             total_time,
+          </if>
+          <if test="integral != null">
+             integral,
+          </if>
+          <if test="isDraw != null">
+             is_draw,
+          </if>
+          <if test="startSteps != null">
+             start_steps,
+          </if>
+          <if test="endSteps != null">
+             end_steps,
+          </if>
+          <if test="startTime != null">
+             start_time,
+          </if>
+          <if test="updateTime != null">
+             update_time,
+          </if>
+          <if test="createTime != null">
+             create_time,
+          </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+          <if test="id != null">
+             #{id,jdbcType=INTEGER},
+          </if>
+          <if test="userId != null">
+             #{userId,jdbcType=INTEGER},
+          </if>
+          <if test="teamId != null">
+             #{teamId,jdbcType=INTEGER},
+          </if>
+          <if test="userName != null">
+             #{userName,jdbcType=VARCHAR},
+          </if>
+          <if test="teamName != null">
+             #{teamName,jdbcType=VARCHAR},
+          </if>
+          <if test="teamNo != null">
+             #{teamNo,jdbcType=VARCHAR},
+          </if>
+          <if test="totalSteps != null">
+             #{totalSteps,jdbcType=INTEGER},
+          </if>
+          <if test="totalDistance != null">
+             #{totalDistance,jdbcType=INTEGER},
+          </if>
+          <if test="totalTime != null">
+             #{totalTime,jdbcType=OTHER},
+          </if>
+          <if test="integral != null">
+             #{integral,jdbcType=INTEGER},
+          </if>
+          <if test="isDraw != null">
+             #{isDraw,jdbcType=VARCHAR},
+          </if>
+          <if test="startSteps != null">
+             #{startSteps,jdbcType=INTEGER},
+          </if>
+          <if test="endSteps != null">
+             #{endSteps,jdbcType=INTEGER},
+          </if>
+          <if test="startTime != null">
+             #{startTime,jdbcType=TIMESTAMP},
+          </if>
+          <if test="updateTime != null">
+             #{updateTime,jdbcType=TIMESTAMP},
+          </if>
+          <if test="createTime != null">
+             #{createTime,jdbcType=TIMESTAMP},
+          </if>
+        </trim>
+    </insert>
+
+    <!--批量新增所有列，列表长度不能为0，且列表id统一为null或者统一不为null-->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true" parameterType="list">
+        insert into walk_log
+         (id, user_id, team_id, user_name, team_name, team_no, total_steps, total_distance, total_time, integral, is_draw, start_steps, end_steps, start_time, update_time, create_time)
+        values
+        <foreach item="item" collection="list" separator="," open="" close="" index="index">
+         (#{item.id,jdbcType=INTEGER}, #{item.userId,jdbcType=INTEGER}, #{item.teamId,jdbcType=INTEGER}, #{item.userName,jdbcType=VARCHAR}, #{item.teamName,jdbcType=VARCHAR}, #{item.teamNo,jdbcType=VARCHAR}, #{item.totalSteps,jdbcType=INTEGER}, #{item.totalDistance,jdbcType=INTEGER}, #{item.totalTime,jdbcType=OTHER}, #{item.integral,jdbcType=INTEGER}, #{item.isDraw,jdbcType=VARCHAR}, #{item.startSteps,jdbcType=INTEGER}, #{item.endSteps,jdbcType=INTEGER}, #{item.startTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.createTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+    <!--通过主键修改实体属性不为null的列-->
+    <update id="update" parameterType="cn.pertech.healthwalk.base.entity.WalkLog">
+        update walk_log
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="teamId != null">
+                team_id = #{teamId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null and userName != ''">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="teamName != null and teamName != ''">
+                team_name = #{teamName,jdbcType=VARCHAR},
+            </if>
+            <if test="teamNo != null and teamNo != ''">
+                team_no = #{teamNo,jdbcType=VARCHAR},
+            </if>
+            <if test="totalSteps != null">
+                total_steps = #{totalSteps,jdbcType=INTEGER},
+            </if>
+            <if test="totalDistance != null">
+                total_distance = #{totalDistance,jdbcType=INTEGER},
+            </if>
+            <if test="totalTime != null">
+                total_time = #{totalTime,jdbcType=OTHER},
+            </if>
+            <if test="integral != null">
+                integral = #{integral,jdbcType=INTEGER},
+            </if>
+            <if test="isDraw != null and isDraw != ''">
+                is_draw = #{isDraw,jdbcType=VARCHAR},
+            </if>
+            <if test="startSteps != null">
+                start_steps = #{startSteps,jdbcType=INTEGER},
+            </if>
+            <if test="endSteps != null">
+                end_steps = #{endSteps,jdbcType=INTEGER},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--通过表字段修改实体属性不为null的列-->
+    <update id="updateByField">
+        update walk_log
+        <set>
+            <if test="where.userId == null and set.userId != null">
+                user_id = #{set.userId,jdbcType=INTEGER},
+            </if>
+            <if test="where.teamId == null and set.teamId != null">
+                team_id = #{set.teamId,jdbcType=INTEGER},
+            </if>
+            <if test="where.userName == null and set.userName != null and set.userName != ''">
+                user_name = #{set.userName,jdbcType=VARCHAR},
+            </if>
+            <if test="where.teamName == null and set.teamName != null and set.teamName != ''">
+                team_name = #{set.teamName,jdbcType=VARCHAR},
+            </if>
+            <if test="where.teamNo == null and set.teamNo != null and set.teamNo != ''">
+                team_no = #{set.teamNo,jdbcType=VARCHAR},
+            </if>
+            <if test="where.totalSteps == null and set.totalSteps != null">
+                total_steps = #{set.totalSteps,jdbcType=INTEGER},
+            </if>
+            <if test="where.totalDistance == null and set.totalDistance != null">
+                total_distance = #{set.totalDistance,jdbcType=INTEGER},
+            </if>
+            <if test="where.totalTime == null and set.totalTime != null">
+                total_time = #{set.totalTime,jdbcType=OTHER},
+            </if>
+            <if test="where.integral == null and set.integral != null">
+                integral = #{set.integral,jdbcType=INTEGER},
+            </if>
+            <if test="where.isDraw == null and set.isDraw != null and set.isDraw != ''">
+                is_draw = #{set.isDraw,jdbcType=VARCHAR},
+            </if>
+            <if test="where.startSteps == null and set.startSteps != null">
+                start_steps = #{set.startSteps,jdbcType=INTEGER},
+            </if>
+            <if test="where.endSteps == null and set.endSteps != null">
+                end_steps = #{set.endSteps,jdbcType=INTEGER},
+            </if>
+            <if test="where.startTime == null and set.startTime != null">
+                start_time = #{set.startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="where.updateTime == null and set.updateTime != null">
+                update_time = #{set.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="where.createTime == null and set.createTime != null">
+                create_time = #{set.createTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <where>
+            <if test="where.id != null">
+                and id = #{where.id,jdbcType=INTEGER}
+            </if>
+            <if test="where.userId != null">
+                and user_id = #{where.userId,jdbcType=INTEGER}
+            </if>
+            <if test="where.teamId != null">
+                and team_id = #{where.teamId,jdbcType=INTEGER}
+            </if>
+            <if test="where.userName != null">
+                and user_name = #{where.userName,jdbcType=VARCHAR}
+            </if>
+            <if test="where.teamName != null">
+                and team_name = #{where.teamName,jdbcType=VARCHAR}
+            </if>
+            <if test="where.teamNo != null">
+                and team_no = #{where.teamNo,jdbcType=VARCHAR}
+            </if>
+            <if test="where.totalSteps != null">
+                and total_steps = #{where.totalSteps,jdbcType=INTEGER}
+            </if>
+            <if test="where.totalDistance != null">
+                and total_distance = #{where.totalDistance,jdbcType=INTEGER}
+            </if>
+            <if test="where.totalTime != null">
+                and total_time = #{where.totalTime,jdbcType=OTHER}
+            </if>
+            <if test="where.integral != null">
+                and integral = #{where.integral,jdbcType=INTEGER}
+            </if>
+            <if test="where.isDraw != null">
+                and is_draw = #{where.isDraw,jdbcType=VARCHAR}
+            </if>
+            <if test="where.startSteps != null">
+                and start_steps = #{where.startSteps,jdbcType=INTEGER}
+            </if>
+            <if test="where.endSteps != null">
+                and end_steps = #{where.endSteps,jdbcType=INTEGER}
+            </if>
+            <if test="where.startTime != null">
+                and start_time = #{where.startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="where.updateTime != null">
+                and update_time = #{where.updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="where.createTime != null">
+                and create_time = #{where.createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </update>
+
+    <!--通过主键修改实体列表，列表长度不能为0，注意：当实体属性为null时，对应的列也会别更新为null-->
+    <update id="updateBatch" parameterType="list">
+        update walk_log
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="user_id = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.userId}
+                 </foreach>
+            </trim>
+            <trim prefix="team_id = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.teamId}
+                 </foreach>
+            </trim>
+            <trim prefix="user_name = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.userName}
+                 </foreach>
+            </trim>
+            <trim prefix="team_name = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.teamName}
+                 </foreach>
+            </trim>
+            <trim prefix="team_no = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.teamNo}
+                 </foreach>
+            </trim>
+            <trim prefix="total_steps = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.totalSteps}
+                 </foreach>
+            </trim>
+            <trim prefix="total_distance = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.totalDistance}
+                 </foreach>
+            </trim>
+            <trim prefix="total_time = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.totalTime}
+                 </foreach>
+            </trim>
+            <trim prefix="integral = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.integral}
+                 </foreach>
+            </trim>
+            <trim prefix="is_draw = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.isDraw}
+                 </foreach>
+            </trim>
+            <trim prefix="start_steps = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.startSteps}
+                 </foreach>
+            </trim>
+            <trim prefix="end_steps = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.endSteps}
+                 </foreach>
+            </trim>
+            <trim prefix="start_time = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.startTime}
+                 </foreach>
+            </trim>
+            <trim prefix="update_time = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.updateTime}
+                 </foreach>
+            </trim>
+            <trim prefix="create_time = case" suffix="end,">
+                 <foreach collection="list" item="item" index="index">
+                  when id = #{item.id} then #{item.createTime}
+                 </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+    
+    <!--通过主键删除-->
+    <delete id="deleteById" parameterType="java.lang.Long">
+        delete from walk_log where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--通过实体非空属性删除-->
+    <delete id="deleteByEntity" parameterType="cn.pertech.healthwalk.base.entity.WalkLog">
+        delete from walk_log
+        <where>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="teamId != null">
+                and team_id = #{teamId,jdbcType=INTEGER}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamName != null">
+                and team_name = #{teamName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamNo != null">
+                and team_no = #{teamNo,jdbcType=VARCHAR}
+            </if>
+            <if test="totalSteps != null">
+                and total_steps = #{totalSteps,jdbcType=INTEGER}
+            </if>
+            <if test="totalDistance != null">
+                and total_distance = #{totalDistance,jdbcType=INTEGER}
+            </if>
+            <if test="totalTime != null">
+                and total_time = #{totalTime,jdbcType=OTHER}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="isDraw != null">
+                and is_draw = #{isDraw,jdbcType=VARCHAR}
+            </if>
+            <if test="startSteps != null">
+                and start_steps = #{startSteps,jdbcType=INTEGER}
+            </if>
+            <if test="endSteps != null">
+                and end_steps = #{endSteps,jdbcType=INTEGER}
+            </if>
+            <if test="startTime != null">
+                and start_time = #{startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </delete>
+    
+    <!--通过主键列表删除，列表长度不能为0-->
+    <delete id="deleteByIds" parameterType="list">
+        delete from walk_log where id in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </delete>
+    
+    <select id="countAll" resultType="int">
+        select count(id) from walk_log
+    </select>
+    
+    <select id="countByEntity" parameterType="cn.pertech.healthwalk.base.entity.WalkLog" resultType="int">
+        select count(id) from walk_log
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=INTEGER}
+            </if>
+            <if test="teamId != null">
+                and team_id = #{teamId,jdbcType=INTEGER}
+            </if>
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamName != null">
+                and team_name = #{teamName,jdbcType=VARCHAR}
+            </if>
+            <if test="teamNo != null">
+                and team_no = #{teamNo,jdbcType=VARCHAR}
+            </if>
+            <if test="totalSteps != null">
+                and total_steps = #{totalSteps,jdbcType=INTEGER}
+            </if>
+            <if test="totalDistance != null">
+                and total_distance = #{totalDistance,jdbcType=INTEGER}
+            </if>
+            <if test="totalTime != null">
+                and total_time = #{totalTime,jdbcType=OTHER}
+            </if>
+            <if test="integral != null">
+                and integral = #{integral,jdbcType=INTEGER}
+            </if>
+            <if test="isDraw != null">
+                and is_draw = #{isDraw,jdbcType=VARCHAR}
+            </if>
+            <if test="startSteps != null">
+                and start_steps = #{startSteps,jdbcType=INTEGER}
+            </if>
+            <if test="endSteps != null">
+                and end_steps = #{endSteps,jdbcType=INTEGER}
+            </if>
+            <if test="startTime != null">
+                and start_time = #{startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pertech.healthwalk.dao.WalkLogDaoExt">
+
+    <resultMap type="cn.pertech.healthwalk.base.data.vo.WalkLogVo" id="WalkLogVoResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="totalSteps" column="total_steps" jdbcType="INTEGER"/>
+        <result property="totalDistance" column="total_distance" jdbcType="INTEGER"/>
+        <result property="totalTime" column="total_time" jdbcType="OTHER"/>
+        <result property="integral" column="integral" jdbcType="INTEGER"/>
+        <result property="isDraw" column="is_draw" jdbcType="VARCHAR"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <select id="statsRandAndSteps" resultMap="WalkLogVoResultMap" parameterType="java.lang.Long">
+        select *, DATE_FORMAT(create_time, '%Y-%m-%d' ) AS type from walk_log where user_id = #{userId} group by type
+    </select>
+
+    <select id="getUserTodayIntegral" resultMap="WalkLogVoResultMap">
+        select * from walk_log where  user_id = #{userId} and DATE_FORMAT(create_time, '%Y-%m-%d' ) = DATE_FORMAT(#{createTime}, '%Y-%m-%d' )
+    </select>
+
+    <select id="getWalkSteps" resultMap="WalkLogVoResultMap" parameterType="cn.pertech.healthwalk.base.data.query.WalkLogQuery">
+        select total_steps, DATE_FORMAT(create_time, '%Y-%m-%d' ) AS type from walk_log
+        where user_id = #{userId}
+        and DATE_FORMAT(create_time, '%Y-%m-%d' ) &gt;= DATE_FORMAT(#{createTimeStart}, '%Y-%m-%d' )
+        and DATE_FORMAT(create_time, '%Y-%m-%d' ) &lt;= DATE_FORMAT(#{createTimeEnd}, '%Y-%m-%d' )
+    </select>
+
+    <select id="statsTeamRankAndSteps" resultType="cn.pertech.healthwalk.base.data.vo.UserStatVo">
+    SELECT
+        *
+    FROM
+        (
+        SELECT
+            walk_log.team_no teamNo,
+            COUNT( DISTINCT ( walk_log.user_id ) ) peopleAmount,
+            avg( total_steps ) avgSteps,
+            <if test="createTime != null">
+            DATE_FORMAT(#{createTime}, '%Y-%m-%d' ) create_time,
+            </if>
+            @curRank := @curRank + 1 AS teamRank
+        FROM
+            walk_log,
+            ( SELECT @curRank := 0 ) r
+        GROUP BY
+            walk_log.team_id
+        ) newTab
+    <where>
+        <if test="teamNo != null and teamNo != ''">
+           and newTab.teamNo = #{teamNo}
+        </if>
+        <if test="createTime != null">
+            and DATE_FORMAT(newTab.create_time, '%Y-%m-%d' ) = DATE_FORMAT(#{createTime}, '%Y-%m-%d' )
+        </if>
+    </where>
+    </select>
+
+    <select id="getUserRank" resultType="cn.pertech.healthwalk.base.data.vo.UserStatVo">
+    select * from
+    (SELECT
+        walk_log.user_id userId,
+        walk_log.user_name userName,
+        walk_log.total_steps userSteps,
+        @curRank := @curRank + 1 AS userRank
+    FROM
+        walk_log,
+        ( SELECT @curRank := 0 ) r
+    <where>
+        <if test="createTime != null">
+            and DATE_FORMAT(walk_log.create_time, '%Y-%m-%d' ) = DATE_FORMAT(#{createTime}, '%Y-%m-%d' )
+        </if>
+        <if test="teamId != null and teamId >0">
+            and walk_log.team_id = #{teamId}
+        </if>
+    </where>
+    order by walk_log.total_steps desc) newTab
+    where userId = #{userId}
+    </select>
+
+    <select id="countUserRank" resultType="cn.pertech.healthwalk.base.data.vo.UserStatVo">
+    SELECT
+        `user`.id userId,
+        `user`.user_name userName,
+        ifnull(walk_log.total_steps, 0) userSteps,
+        ifnull(walk_log.create_time, DATE_FORMAT(#{createTime}, '%Y-%m-%d')) create_time
+    FROM
+        `user`
+        LEFT JOIN walk_log on (`user`.id = walk_log.user_id and DATE_FORMAT(walk_log.create_time, '%Y-%m-%d' ) = DATE_FORMAT(#{createTime}, '%Y-%m-%d'))
+    <where>
+        <if test="teamNo != null and teamNo != ''">
+            and `user`.team_no = #{teamNo}
+        </if>
+    </where>
+    ORDER BY userSteps DESC
+    </select>
+
+<!--    <select id="getUserRank" resultType="cn.pertech.healthwalk.base.data.vo.UserStatVo">-->
+<!--    SELECT-->
+<!--        `user`.id userId,-->
+<!--        `user`.user_name userName,-->
+<!--        ifnull(walk_log.total_steps, 0) userSteps,-->
+<!--        walk_log.create_time-->
+<!--    FROM-->
+<!--        `user`-->
+<!--        LEFT JOIN walk_log on (`user`.id = walk_log.user_id and DATE_FORMAT(walk_log.create_time, '%Y-%m-%d' ) = DATE_FORMAT(#{createTime}, '%Y-%m-%d' ))-->
+<!--        ORDER BY userSteps DESC-->
+<!--    </select>-->
+
+    <!-- 排行榜 -->
+<!--    <select id="getTeamRankList" resultType="cn.pertech.healthwalk.base.data.vo.TeamStatVo" parameterType="cn.pertech.healthwalk.base.data.query.StatQuery">-->
+<!--        SELECT-->
+<!--            walk_log.team_id teamId,-->
+<!--            walk_log.team_name teamName,-->
+<!--            walk_log.team_no teamNO,-->
+<!--            COUNT( DISTINCT ( walk_log.user_id ) ) peopleAmount,-->
+<!--            avg( total_steps ) avgSteps,-->
+<!--            @curRank := @curRank + 1 AS teamRank-->
+<!--        FROM-->
+<!--            walk_log,-->
+<!--            ( SELECT @curRank := 0 ) r-->
+<!--        <where>-->
+<!--            <if test="timeStart != null and timeEnd != null">-->
+<!--                and DATE_FORMAT(create_time, '%Y-%m-%d' ) &gt;= DATE_FORMAT(#{timeStart}, '%Y-%m-%d' )-->
+<!--                and DATE_FORMAT(create_time, '%Y-%m-%d' ) &lt; DATE_FORMAT(#{timeEnd}, '%Y-%m-%d' )-->
+<!--            </if>-->
+<!--            <if test="kind != null and kind == 1">-->
+<!--                and cast(walk_log.team_no as UNSIGNED INTEGER) &lt;= 10-->
+<!--            </if>-->
+<!--            <if test="kind != null and kind == 2">-->
+<!--                and cast(walk_log.team_no as UNSIGNED INTEGER) &gt;= 11-->
+<!--            </if>-->
+<!--        </where>-->
+<!--        GROUP BY-->
+<!--            walk_log.team_no-->
+<!--    </select>-->
+
+    <!-- 团队排行榜 -->
+    <select id="getTeamRankList" resultType="cn.pertech.healthwalk.base.data.vo.TeamStatVo" parameterType="cn.pertech.healthwalk.base.data.query.StatQuery">
+    	SELECT
+			team.id teamId,
+			team.team_name teamName,
+			team.team_no teamNo,
+			ifnull( COUNT( DISTINCT ( walk_log.user_id ) ), 0 ) peopleAmount,
+			ifnull( avg( total_steps ), 0 ) avgSteps
+		FROM
+			team
+			LEFT JOIN walk_log ON (team.id = walk_log.team_id
+            <if test="timeStart != null and timeEnd != null">
+                and DATE_FORMAT(walk_log.create_time, '%Y-%m-%d' ) &gt;= DATE_FORMAT(#{timeStart}, '%Y-%m-%d' )
+                and DATE_FORMAT(walk_log.create_time, '%Y-%m-%d' ) &lt; DATE_FORMAT(#{timeEnd}, '%Y-%m-%d' )
+            </if>
+			)
+        <where>
+            <if test="kind != null and kind == 1">
+                and team.team_type = 4
+            </if>
+            <if test="kind != null and kind == 2">
+                and team.team_type in (1,2,3)
+            </if>
+        </where>
+		GROUP BY
+			team.id
+    </select>
+</mapper>
