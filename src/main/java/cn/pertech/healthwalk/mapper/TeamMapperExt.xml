@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.pertech.healthwalk.dao.TeamDaoExt">
+
+    <select id="getTeamByFirst3Str" resultMap="cn.pertech.healthwalk.base.dao.TeamDao.TeamResultMap">
+        select * from team where team_no like #{teamNo} and type != 4
+    </select>
+
+    <select id="getTeamListByTeamType" resultMap="cn.pertech.healthwalk.base.dao.TeamDao.TeamResultMap">
+        select * from team where team_type in
+        <foreach item="item" collection="list" separator="," open="(" close=")" index="index">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="getTeamListByPid" resultMap="cn.pertech.healthwalk.base.dao.TeamDao.TeamResultMap">
+        select * from team where pid = #{pid}
+    </select>
+</mapper>

@@ -10,6 +10,7 @@ import cn.pertech.healthwalk.base.entity.WalkLog;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -65,4 +66,11 @@ public interface WalkLogDaoExt extends WalkLogDao {
      * @return
      */
     List<TeamStatVo> getTeamRankList(StatQuery query);
+
+    /**
+     * 获取某区县产业工会下所有基层工会步数和参与人数
+     * @param list
+     * @return
+     */
+    TeamStatVo getTopTeamStepAndPeoAmount(@Param("list") List<Long> list,@Param("timeStart") Date timeStart,@Param("timeEnd") Date timeEnd);
 }

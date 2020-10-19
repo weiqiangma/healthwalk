@@ -10,6 +10,7 @@
     </parent>
     <groupId>cn.pertech</groupId>
     <artifactId>healthwalk</artifactId>
+    <packaging>war</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>healthwalk</name>
     <description>Demo project for Spring Boot</description>
@@ -127,45 +128,14 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
 
-            <!-- 打JAR包 -->
+            <!--如果开启这个就是打<spring boot>的包-->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <!-- 不打包资源文件（配置文件和依赖包分开）如果不是jar部署这里要开启 -->
-                    <excludes>
-                        <exclude>etc/**</exclude>
-                        <exclude>opencv/**</exclude>
-                        <exclude>webapp/**</exclude>
-                        <exclude>*.properties</exclude>
-                        <exclude>*.xml</exclude>
-                        <exclude>*.txt</exclude>
-                    </excludes>
-                    <outputDirectory>../target</outputDirectory>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
 
-        <!--代码中的xml文件也打包-->
         <resources>
             <resource>
                 <directory>src/main/java</directory>
@@ -173,7 +143,53 @@
                     <include>**/*.xml</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>src/main</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
         </resources>
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <version>3.1</version>-->
+<!--                <configuration>-->
+<!--                    <source>${java.version}</source>-->
+<!--                    <target>${java.version}</target>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+
+<!--            &lt;!&ndash; 打JAR包 &ndash;&gt;-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-jar-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash; 不打包资源文件（配置文件和依赖包分开）如果不是jar部署这里要开启 &ndash;&gt;-->
+<!--                    <excludes>-->
+<!--                        <exclude>etc/**</exclude>-->
+<!--                        <exclude>opencv/**</exclude>-->
+<!--                        <exclude>webapp/**</exclude>-->
+<!--                        <exclude>*.properties</exclude>-->
+<!--                        <exclude>*.xml</exclude>-->
+<!--                        <exclude>*.txt</exclude>-->
+<!--                    </excludes>-->
+<!--                    <outputDirectory>../target</outputDirectory>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-resources-plugin</artifactId>-->
+<!--                <version>2.6</version>-->
+<!--                <configuration>-->
+<!--                    <encoding>UTF-8</encoding>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+
+<!--        &lt;!&ndash;代码中的xml文件也打包&ndash;&gt;-->
     </build>
 
 

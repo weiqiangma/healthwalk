@@ -16,6 +16,7 @@ import cn.pertech.healthwalk.utils.WechatDecryptDataUtil;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.xiaoleilu.hutool.crypto.SecureUtil;
+import com.xiaoleilu.hutool.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.http.Header;
@@ -107,17 +108,32 @@ public class WxApiServiceExt {
                 String memberUnionName = resultObj.getString("memberUnionName");
                 Integer activeIntegral = resultObj.getInteger("activeIntegral");
                 Integer bindStatus = resultObj.getInteger("bindStatus");
+                log.error("nickName:" + nickName +",memberUnionCode:" + memberUnionCode + ",Integeral:" + activeIntegral.toString() + ",status:" + bindStatus);
 
-                //TODO 测试代码
+                /**
+                 * 根据unionId如娶不到用户生成随机用户，
+                 * 能取到用户，如果用户信息为空，创建随机信息
+                 */
                 User userQuery = new User();
                 userQuery.setUnionId(unionId);
                 User resultUser = userServiceExt.getByEntity(userQuery);
-                if(resultUser == null || resultUser.getStatus() != Constant.USER_STATUS_ACTIVE) {
-                    nickName = getName();
+                if(resultUser == null || resultUser.getStatus() == Constant.USER_STATUS_LOCK) {
+                    if(nickName == null) {
+                        nickName = getName();
+                    }
                     Team team = createRandomTeam();
-                    memberUnionCode = team.getTeamNo();
-                    memberUnionName = team.getTeamName();
-                    activeIntegral = createRandomIntegral();
+                    if(memberUnionCode == null) {
+                        memberUnionCode = team.getTeamNo();
+                    }
+                    if(memberUnionName == null) {
+                        memberUnionName = team.getTeamName();
+                    }
+                    if(activeIntegral == null) {
+                        activeIntegral = createRandomIntegral();
+                    }
+                    if(headImg == null) {
+                        headImg = "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3491929439,4106440758&fm=26&gp=0.jpg";
+                    }
                 } else {
                     nickName = user.getUserName();
                     memberUnionCode = user.getTeamNo();
@@ -133,21 +149,42 @@ public class WxApiServiceExt {
                 user.setTeamName(memberUnionName);
                 user.setIntegral(activeIntegral);
                 user.setStatus(bindStatus);
-                Team query = new Team();
-                query.setTeamNo(memberUnionCode);
-                Team resultTeam = teamServiceExt.getByEntity(query);
-                if(resultTeam == null) {
-                    Team insertTeam = new Team();
-                    insertTeam.setTeamName(memberUnionName);
-                    insertTeam.setTeamNo(memberUnionCode);
-                    int teamType = judgeTeamType(memberUnionCode);
-                    insertTeam.setTeamType(teamType);
-                    insertTeam.setCreateTime(new Date());
-                    insertTeam.setUpdateTime(new Date());
-                    teamServiceExt.insert(insertTeam);
-                    user.setTeamId(insertTeam.getId());
+                if(StringUtils.isNotEmpty(memberUnionCode)) {
+                    if(memberUnionCode.length() == 10) {
+                        Team query = new Team();
+                        query.setTeamNo(memberUnionCode);
+                        Team resultTeam = teamServiceExt.getByEntity(query);
+                        if (resultTeam == null) {
+                            Team insertTeam = new Team();
+                            String last4Str = memberUnionCode.substring(memberUnionCode.length() -4, memberUnionCode.length());
+                            int last4Number = NumberUtils.str2Int(last4Str);
+                            //基层工会
+                            if(last4Number > 0) {
+                                //基层工会有上层组织，pid为上层组织id,无上层组织，pid设为-1
+                                Team parentTeam = getParentTeam(memberUnionCode);
+                                if(parentTeam != null) {
+                                    insertTeam.setPid(parentTeam.getPid());
+                                } else {
+                                    insertTeam.setPid((long) -1);
+                                }
+                            }
+                            insertTeam.setTeamName(memberUnionName);
+                            insertTeam.setTeamNo(memberUnionCode);
+                            int teamType = judgeTeamType(memberUnionCode);
+                            insertTeam.setTeamType(teamType);
+                            insertTeam.setCreateTime(new Date());
+                            insertTeam.setUpdateTime(new Date());
+                            teamServiceExt.insert(insertTeam);
+                            user.setTeamId(insertTeam.getId());
+                        }
+                        user.setTeamId(resultTeam.getId());
+                    } else {
+                        //TODO 测试代码
+                        Team team = createRandomTeam();
+                        user.setTeamId(team.getId());
+                        user.setTeamNo(team.getTeamNo());
+                    }
                 }
-                user.setTeamId(resultTeam.getId());
             } else {
                 log.info("根据unionId查询用户信息失败");
             }
@@ -227,10 +264,26 @@ public class WxApiServiceExt {
     }
 
     public Team createRandomTeam() {
-        List<Team> list = teamServiceExt.listByEntity(new Team());
+        Team query = new Team();
+        query.setTeamType(4);
+        List<Team> list = teamServiceExt.listByEntity(query);
         Random random = new Random();
         int number = random.nextInt(list.size() - 1);
         return list.get(number);
+    }
+
+    public Team getParentTeam(String teamNo) {
+        Assert.notEmpty(teamNo);
+        Team resultTeam = new Team();
+        String last4Str = teamNo.substring(teamNo.length() -4, teamNo.length());
+        int last4Number = NumberUtils.str2Int(last4Str);
+        if(last4Number > 0) {
+            Team parentTeam = new Team();
+            String first3Str = teamNo.substring(0,3);
+            int first3Number = NumberUtils.str2Int(first3Str);
+            resultTeam = teamServiceExt.getTeamByTeamNo(first3Str);
+        }
+        return resultTeam;
     }
 
     public String getName() {
@@ -244,8 +297,10 @@ public class WxApiServiceExt {
         String girl = "秀娟英华慧巧美娜静淑惠珠翠雅芝玉萍红娥玲芬芳燕彩春菊兰凤洁梅琳素云莲真环雪荣爱妹霞香月莺媛艳瑞凡佳嘉琼勤珍贞莉桂娣叶璧璐娅琦晶妍茜秋珊莎锦黛青倩婷姣婉娴瑾颖露瑶怡婵雁蓓纨仪荷丹蓉眉君琴蕊薇菁梦岚苑婕馨瑗琰韵融园艺咏卿聪澜纯毓悦昭冰爽琬茗羽希宁欣飘育滢馥筠柔竹霭凝晓欢霄枫芸菲寒伊亚宜可姬舒影荔枝思丽 ";
         String boy = "伟刚勇毅俊峰强军平保东文辉力明永健世广志义兴良海山仁波宁贵福生龙元全国胜学祥才发武新利清飞彬富顺信子杰涛昌成康星光天达安岩中茂进林有坚和彪博诚先敬震振壮会思群豪心邦承乐绍功松善厚庆磊民友裕河哲江超浩亮政谦亨奇固之轮翰朗伯宏言若鸣朋斌梁栋维启克伦翔旭鹏泽晨辰士以建家致树炎德行时泰盛雄琛钧冠策腾楠榕风航弘";
         int index = random.nextInt(Surname.length - 1);
-        String name = Surname[index]; //获得一个随机的姓氏
-        int i = random.nextInt(3);//可以根据这个数设置产生的男女比例
+        //获得一个随机的姓氏
+        String name = Surname[index];
+        //可以根据这个数设置产生的男女比例
+        int i = random.nextInt(3);
         if(i==2){
             int j = random.nextInt(girl.length()-2);
             if (j % 2 == 0) {

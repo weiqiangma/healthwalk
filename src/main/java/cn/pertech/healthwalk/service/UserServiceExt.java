@@ -242,13 +242,47 @@ public class UserServiceExt extends UserService {
      * @return
      */
     public List<TeamStatVo> countTeamRankList(StatQuery query) {
-        List<TeamStatVo> list = walkLogDaoExt.getTeamRankList(query);
-        List<TeamStatVo> sortList = list.stream().sorted(Comparator.comparing(TeamStatVo::getAvgSteps).reversed()).collect(Collectors.toList());
-        for(int i = 0; i < sortList.size(); i++) {
-            TeamStatVo teamStatVo = list.get(i);
-            teamStatVo.setTeamRank(i+1);
+        /**
+         * kind=1，查询区县产业排行榜
+         * 获取该父级工会下所有子工会步数和参与人数
+         */
+        List<TeamStatVo> resultStatVos = new ArrayList<>();
+        if(query.getKind() != null && query.getKind() == 2) {
+            List<Integer> teamStatusList = Arrays.asList(Constant.TEAM_TYPE_COUNTRY_TOWN, Constant.TEAM_TYPE_AREA, Constant.TEAM_TYPE_INDUSTRIAL);
+            List<Team> teamList = teamServiceExt.getTeamListByStatus(teamStatusList);
+            for(Team team : teamList) {
+                TeamStatVo resultTeamVo = new TeamStatVo();
+
+                List<Team> childrenList = teamServiceExt.getTeamListByPid(team.getId());
+                if(childrenList.size() > 0) {
+                    List<Long> childrenIdList = childrenList.stream().map(item -> item.getId()).collect(Collectors.toList());
+                    //把父工会id加入搜索
+                    childrenIdList.add(team.getId());
+                    resultTeamVo = walkLogDaoExt.getTopTeamStepAndPeoAmount(childrenIdList, query.getTimeStart(), query.getTimeEnd());
+                    resultStatVos.add(resultTeamVo);
+                } else {
+                    List<Long> childrentList = new ArrayList<>();
+                    childrentList.add(team.getId());
+                    resultTeamVo = walkLogDaoExt.getTopTeamStepAndPeoAmount(childrentList, query.getTimeStart(), query.getTimeEnd());
+                    resultStatVos.add(resultTeamVo);
+                }
+                resultTeamVo.setTeamName(team.getTeamName());
+                resultTeamVo.setTeamId(team.getId());
+            }
         }
+        if(query.getKind() != null && query.getKind() == 1) {
+            resultStatVos = walkLogDaoExt.getTeamRankList(query);
+        }
+        List<TeamStatVo> sortList = resultStatVos.stream().sorted(Comparator.comparing(TeamStatVo::getAvgSteps).reversed()).collect(Collectors.toList());
         return sortList;
+
+//        List<TeamStatVo> list = walkLogDaoExt.getTeamRankList(query);
+//        List<TeamStatVo> sortList = list.stream().sorted(Comparator.comparing(TeamStatVo::getAvgSteps).reversed()).collect(Collectors.toList());
+//        for(int i = 0; i < sortList.size(); i++) {
+//            TeamStatVo teamStatVo = list.get(i);
+//            teamStatVo.setTeamRank(i+1);
+//        }
+//        return sortList;
     }
 
     /**

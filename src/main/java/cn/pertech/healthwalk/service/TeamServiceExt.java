@@ -39,4 +39,16 @@ public class TeamServiceExt extends TeamService {
         query.setTeamNo(teamNo);
         return teamDaoExt.getByEntity(query);
     }
+
+    public Team getTeamByFirst3Str(String teamNo) {
+        return teamDaoExt.getTeamByFirst3Str(teamNo);
+    }
+
+    public List<Team> getTeamListByPid(Long pid) {
+        return teamDaoExt.getTeamListByPid(pid);
+    }
+
+    public List<Team> getTeamListByStatus(List<Integer> list) {
+        return teamDaoExt.getTeamListByTeamType(list);
+    }
 }
