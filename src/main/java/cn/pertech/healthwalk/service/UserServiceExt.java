@@ -240,7 +240,7 @@ public class UserServiceExt extends UserService {
      * @param query
      * @return
      */
-    public List<TeamStatVo> countTeamRankList(StatQuery query) {
+    public List<TeamStatVo> countTeamRankList(User user, StatQuery query) {
         /**
          * kind=1，查询区县产业排行榜。kind=2查询团队榜
          * 获取该父级工会下所有子工会步数和参与人数
@@ -250,8 +250,8 @@ public class UserServiceExt extends UserService {
             List<Integer> teamStatusList = Arrays.asList(Constant.TEAM_TYPE_COUNTRY_TOWN, Constant.TEAM_TYPE_AREA, Constant.TEAM_TYPE_INDUSTRIAL);
             List<Team> teamList = teamServiceExt.getTeamListByStatus(teamStatusList);
             for(Team team : teamList) {
+                int flag = 0;
                 TeamStatVo resultTeamVo = new TeamStatVo();
-
                 List<Team> childrenList = teamServiceExt.getTeamListByPid(team.getId());
                 if(childrenList.size() > 0) {
                     List<Long> childrenIdList = childrenList.stream().map(item -> item.getId()).collect(Collectors.toList());
@@ -265,15 +265,30 @@ public class UserServiceExt extends UserService {
                     resultTeamVo = walkLogDaoExt.getTopTeamStepAndPeoAmount(childrentList, query.getTimeStart(), query.getTimeEnd());
                     resultStatVos.add(resultTeamVo);
                 }
+                if(user.getTeamId().equals(team.getId())) {
+                    resultTeamVo.setFlag(1);
+                } else {
+                    resultTeamVo.setFlag(0);
+                }
+                resultTeamVo.setFlag(flag);
                 resultTeamVo.setTeamName(team.getTeamName());
                 resultTeamVo.setTeamId(team.getId());
             }
         }
         if(query.getKind() != null && query.getKind() == 1) {
             resultStatVos = walkLogDaoExt.getTeamRankList(query);
+            Long a = user.getTeamId();
+            for(TeamStatVo teamStatVo : resultStatVos) {
+                Long b = teamStatVo.getTeamId();
+                if(a.equals(b)) {
+                    teamStatVo.setFlag(1);
+                } else {
+                    teamStatVo.setFlag(0);
+                }
+            }
         }
         //根据平均步数和id排序
-        List<TeamStatVo> sortList = resultStatVos.stream().sorted(Comparator.comparing(TeamStatVo::getAvgSteps).reversed().thenComparing(TeamStatVo::getTeamId).reversed()).collect(Collectors.toList());
+        List<TeamStatVo> sortList = resultStatVos.stream().sorted(Comparator.comparing(TeamStatVo::getAvgSteps).reversed()).collect(Collectors.toList());
         return sortList;
     }
 

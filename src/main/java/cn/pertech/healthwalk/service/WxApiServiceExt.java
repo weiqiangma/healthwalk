@@ -15,6 +15,7 @@ import cn.pertech.healthwalk.utils.StringUtils;
 import cn.pertech.healthwalk.utils.WechatDecryptDataUtil;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import com.xiaoleilu.hutool.crypto.SecureUtil;
 import com.xiaoleilu.hutool.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
@@ -153,7 +154,7 @@ public class WxApiServiceExt {
                 user.setTeamName(memberUnionName);
                 user.setIntegral(activeIntegral);
                 user.setStatus(bindStatus);
-                if(StringUtils.isNotEmpty(memberUnionCode) && memberUnionCode.length() == 10) {
+                if(StringUtils.isNotEmpty(memberUnionCode)) {
                     if(memberUnionCode.length() == 10) {
                         Team query = new Team();
                         query.setTeamNo(memberUnionCode);
@@ -284,13 +285,13 @@ public class WxApiServiceExt {
         String last4Str = teamNo.substring(teamNo.length() -4, teamNo.length());
         int last4Number = NumberUtils.str2Int(last4Str);
         if(last4Number > 0) {
-            Team parentTeam = new Team();
             String first3Str = teamNo.substring(0,3);
-            int first3Number = NumberUtils.str2Int(first3Str);
-            resultTeam = teamServiceExt.getTeamByTeamNo(first3Str);
+            String parentStr = first3Str + "0000000";
+            resultTeam = teamServiceExt.getTeamByTeamNo(parentStr);
         }
         return resultTeam;
     }
+
 
     public String getName() {
         Random random = new Random();

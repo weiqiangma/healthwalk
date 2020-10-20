@@ -17,4 +17,5 @@ public class TeamStatVo {
     private Integer peopleAmount;
     private Integer avgSteps;
     private Integer rank;
+    private Integer flag;
 }

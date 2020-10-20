@@ -6,6 +6,7 @@ import cn.pertech.healthwalk.base.data.query.StatQuery;
 import cn.pertech.healthwalk.base.data.vo.TeamStatVo;
 import cn.pertech.healthwalk.base.data.vo.UserStatVo;
 import cn.pertech.healthwalk.base.entity.Team;
+import cn.pertech.healthwalk.base.entity.User;
 import cn.pertech.healthwalk.base.service.TeamService;
 import cn.pertech.healthwalk.dao.TeamDaoExt;
 import cn.pertech.healthwalk.dao.WalkLogDaoExt;
@@ -30,8 +31,8 @@ public class TeamServiceExt extends TeamService {
     @Resource
     UserServiceExt userServiceExt;
 
-    public List<TeamStatVo> getTeamRank(StatQuery query) {
-        return userServiceExt.countTeamRankList(query);
+    public List<TeamStatVo> getTeamRank(User user, StatQuery query) {
+        return userServiceExt.countTeamRankList(user, query);
     }
 
     public Team getTeamByTeamNo(String teamNo) {

@@ -1,6 +1,9 @@
 package cn.pertech.healthwalk;
 
+import cn.pertech.healthwalk.base.entity.Team;
 import cn.pertech.healthwalk.base.entity.User;
+import cn.pertech.healthwalk.service.TeamServiceExt;
+import cn.pertech.healthwalk.service.UserServiceExt;
 import cn.pertech.healthwalk.service.WxApiServiceExt;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -13,6 +16,10 @@ class HealthwalkApplicationTests {
 
     @Autowired
     private WxApiServiceExt wxApiServiceExt;
+    @Autowired
+    private UserServiceExt userServiceExt;
+    @Autowired
+    private TeamServiceExt teamServiceExt;
 
     @Test
     void contextLoads() {
@@ -21,7 +28,8 @@ class HealthwalkApplicationTests {
 
     @Test
     void testOperateUserIntegral() {
-        ///wxApiServiceExt.operateUserIntegral("ocjQ55h071yHM4XJRt2uXw8NrRD4");
+       Team team = wxApiServiceExt.getParentTeam("0040330017");
+       System.out.println(team.toString());
     }
 
 }

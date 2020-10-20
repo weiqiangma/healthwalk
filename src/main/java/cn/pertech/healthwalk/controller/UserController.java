@@ -192,11 +192,12 @@ public class UserController extends BaseController {
             insertWalkLog.setUpdateTime(new Date());
             insertWalkLog.setCreateTime(new Date());
             walkLogServiceExt.insert(insertWalkLog);
-
-            UserStatVo userStatVo = userServiceExt.countUserRank(user.getId(), user.getTeamNo());
-            user.setTodayRank(userStatVo.getTodayRank());
-            user.setTodayStep(userStatVo.getTodayStep());
-            userServiceExt.update(user);
+            if(StringUtils.isNotEmpty(user.getTeamNo())) {
+                UserStatVo userStatVo = userServiceExt.countUserRank(user.getId(), user.getTeamNo());
+                user.setTodayRank(userStatVo.getTodayRank());
+                user.setTodayStep(userStatVo.getTodayStep());
+                userServiceExt.update(user);
+            }
             resultObj.put("totalSteps", insertWalkLog.getTotalSteps());
             return sendSuccess(resultObj);
         } else {
@@ -206,11 +207,12 @@ public class UserController extends BaseController {
             walkLog.setIntegral(integral);
             walkLog.setUpdateTime(new Date());
             walkLogServiceExt.update(walkLog);
-
-            UserStatVo userStatVo = userServiceExt.countUserRank(user.getId(), user.getTeamNo());
-            user.setTodayRank(userStatVo.getTodayRank());
-            user.setTodayStep(userStatVo.getTodayStep());
-            userServiceExt.update(user);
+            if(StringUtils.isNotEmpty(user.getTeamNo())) {
+                UserStatVo userStatVo = userServiceExt.countUserRank(user.getId(), user.getTeamNo());
+                user.setTodayRank(userStatVo.getTodayRank());
+                user.setTodayStep(userStatVo.getTodayStep());
+                userServiceExt.update(user);
+            }
             resultObj.put("totalSteps", walkLog.getTotalSteps());
             return sendSuccess(walkLog);
         }
