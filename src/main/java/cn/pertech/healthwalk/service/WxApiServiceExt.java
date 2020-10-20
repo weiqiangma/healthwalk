@@ -54,6 +54,8 @@ public class WxApiServiceExt {
     @Value("${wx.secretKey}")
     private String secretKey;
 
+    private static String profilesActive;
+
     @Resource
     TeamServiceExt teamServiceExt;
     @Resource
@@ -109,38 +111,40 @@ public class WxApiServiceExt {
                 Integer activeIntegral = resultObj.getInteger("activeIntegral");
                 Integer bindStatus = resultObj.getInteger("bindStatus");
                 log.error("nickName:" + nickName +",memberUnionCode:" + memberUnionCode + ",Integeral:" + activeIntegral.toString() + ",status:" + bindStatus);
-
-                /**
-                 * 根据unionId如娶不到用户生成随机用户，
-                 * 能取到用户，如果用户信息为空，创建随机信息
-                 */
-                User userQuery = new User();
-                userQuery.setUnionId(unionId);
-                User resultUser = userServiceExt.getByEntity(userQuery);
-                if(resultUser == null || resultUser.getStatus() == Constant.USER_STATUS_LOCK) {
-                    if(nickName == null) {
-                        nickName = getName();
+                //TODO 测试代码
+                if(!"pro".equalsIgnoreCase(WxApiServiceExt.profilesActive)) {
+                    /**
+                     * 根据unionId如取不到用户生成随机用户，
+                     * 能取到用户，如果用户信息为空，创建随机信息
+                     */
+                    User userQuery = new User();
+                    userQuery.setUnionId(unionId);
+                    User resultUser = userServiceExt.getByEntity(userQuery);
+                    if (resultUser == null || resultUser.getStatus() == Constant.USER_STATUS_LOCK) {
+                        if (nickName == null) {
+                            nickName = getName();
+                        }
+                        Team team = createRandomTeam();
+                        if (memberUnionCode == null) {
+                            memberUnionCode = team.getTeamNo();
+                        }
+                        if (memberUnionName == null) {
+                            memberUnionName = team.getTeamName();
+                        }
+                        if (activeIntegral == null) {
+                            activeIntegral = createRandomIntegral();
+                        }
+                        if (headImg == null) {
+                            headImg = "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3491929439,4106440758&fm=26&gp=0.jpg";
+                        }
+                    } else {
+                        nickName = user.getUserName();
+                        memberUnionCode = user.getTeamNo();
+                        memberUnionName = user.getTeamName();
+                        activeIntegral = user.getIntegral();
                     }
-                    Team team = createRandomTeam();
-                    if(memberUnionCode == null) {
-                        memberUnionCode = team.getTeamNo();
-                    }
-                    if(memberUnionName == null) {
-                        memberUnionName = team.getTeamName();
-                    }
-                    if(activeIntegral == null) {
-                        activeIntegral = createRandomIntegral();
-                    }
-                    if(headImg == null) {
-                        headImg = "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3491929439,4106440758&fm=26&gp=0.jpg";
-                    }
-                } else {
-                    nickName = user.getUserName();
-                    memberUnionCode = user.getTeamNo();
-                    memberUnionName = user.getTeamName();
-                    activeIntegral = user.getIntegral();
+                    bindStatus = 1;
                 }
-                bindStatus = 1;
 
                 user.setUnionId(unionId);
                 user.setAvatarUrl(headImg);
@@ -149,7 +153,7 @@ public class WxApiServiceExt {
                 user.setTeamName(memberUnionName);
                 user.setIntegral(activeIntegral);
                 user.setStatus(bindStatus);
-                if(StringUtils.isNotEmpty(memberUnionCode)) {
+                if(StringUtils.isNotEmpty(memberUnionCode) && memberUnionCode.length() == 10) {
                     if(memberUnionCode.length() == 10) {
                         Team query = new Team();
                         query.setTeamNo(memberUnionCode);
@@ -180,9 +184,11 @@ public class WxApiServiceExt {
                         user.setTeamId(resultTeam.getId());
                     } else {
                         //TODO 测试代码
-                        Team team = createRandomTeam();
-                        user.setTeamId(team.getId());
-                        user.setTeamNo(team.getTeamNo());
+                        if(!"pro".equalsIgnoreCase(WxApiServiceExt.profilesActive)) {
+                            Team team = createRandomTeam();
+                            user.setTeamId(team.getId());
+                            user.setTeamNo(team.getTeamNo());
+                        }
                     }
                 }
             } else {
@@ -329,8 +335,8 @@ public class WxApiServiceExt {
     }
 
 
-    class TeamVo {
-        String teamName;
-        String teamNo;
+    @Value("${spring.profiles.active}")
+    public void setProfilesActive(String profilesActive) {
+        WxApiServiceExt.profilesActive = profilesActive;
     }
 }

@@ -216,7 +216,6 @@ public class UserServiceExt extends UserService {
         }
         //团队排名统计
         if(teamNo != null) {
-            //UserStatVo userStatVo = walkLogDaoExt.statsTeamRankAndSteps(teamNo, today);
             StatQuery teamQuery = new StatQuery();
             teamQuery.setTimeStart(new Date());
             teamQuery.setTimeEnd(DateUtils.addDay(new Date(),1));
@@ -243,7 +242,7 @@ public class UserServiceExt extends UserService {
      */
     public List<TeamStatVo> countTeamRankList(StatQuery query) {
         /**
-         * kind=1，查询区县产业排行榜
+         * kind=1，查询区县产业排行榜。kind=2查询团队榜
          * 获取该父级工会下所有子工会步数和参与人数
          */
         List<TeamStatVo> resultStatVos = new ArrayList<>();
@@ -256,7 +255,7 @@ public class UserServiceExt extends UserService {
                 List<Team> childrenList = teamServiceExt.getTeamListByPid(team.getId());
                 if(childrenList.size() > 0) {
                     List<Long> childrenIdList = childrenList.stream().map(item -> item.getId()).collect(Collectors.toList());
-                    //把父工会id加入搜索
+                    //把父工会id加入idList一并纳入搜索
                     childrenIdList.add(team.getId());
                     resultTeamVo = walkLogDaoExt.getTopTeamStepAndPeoAmount(childrenIdList, query.getTimeStart(), query.getTimeEnd());
                     resultStatVos.add(resultTeamVo);
@@ -273,16 +272,9 @@ public class UserServiceExt extends UserService {
         if(query.getKind() != null && query.getKind() == 1) {
             resultStatVos = walkLogDaoExt.getTeamRankList(query);
         }
-        List<TeamStatVo> sortList = resultStatVos.stream().sorted(Comparator.comparing(TeamStatVo::getAvgSteps).reversed()).collect(Collectors.toList());
+        //根据平均步数和id排序
+        List<TeamStatVo> sortList = resultStatVos.stream().sorted(Comparator.comparing(TeamStatVo::getAvgSteps).reversed().thenComparing(TeamStatVo::getTeamId).reversed()).collect(Collectors.toList());
         return sortList;
-
-//        List<TeamStatVo> list = walkLogDaoExt.getTeamRankList(query);
-//        List<TeamStatVo> sortList = list.stream().sorted(Comparator.comparing(TeamStatVo::getAvgSteps).reversed()).collect(Collectors.toList());
-//        for(int i = 0; i < sortList.size(); i++) {
-//            TeamStatVo teamStatVo = list.get(i);
-//            teamStatVo.setTeamRank(i+1);
-//        }
-//        return sortList;
     }
 
     /**

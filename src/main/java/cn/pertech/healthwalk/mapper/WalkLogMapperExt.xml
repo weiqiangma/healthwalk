@@ -171,6 +171,7 @@
 
     <select id="getTopTeamStepAndPeoAmount" resultType="cn.pertech.healthwalk.base.data.vo.TeamStatVo" parameterType="cn.pertech.healthwalk.base.data.query.StatQuery">
         SELECT
+        walk_log.team_id teamId,
         walk_log.team_name teamName,
         walk_log.team_no teamNo,
         ifnull( COUNT( DISTINCT ( walk_log.user_id ) ), 0 ) peopleAmount,
