@@ -119,7 +119,7 @@ public class UserController extends BaseController {
         JSONObject object = new JSONObject();
         int isAuth = 0;
         User user = userServiceExt.getById(session.getId());
-        if(user == null) {
+        if (user == null) {
             return sendArgsError("查询不到该用户");
         }
 
@@ -128,24 +128,23 @@ public class UserController extends BaseController {
         //TODO 测试用
         String unionId = resultObj.getString("unionId");
         //unionId = "ocjQ55rFbU0HbpHmFdVDyOi0eEkE";
-        if(unionId == null) {
+        if (unionId == null) {
             return sendArgsError("查询unionId失败");
         }
         User wxUser = wxApiServiceExt.getUserByUnionId(unionId, user);
-        if(wxUser != null && wxUser.getUnionId() != null && wxUser.getStatus() == Constant.USER_STATUS_ACTIVE) {
+        if (wxUser != null && wxUser.getUnionId() != null && wxUser.getStatus() == Constant.USER_STATUS_ACTIVE) {
             isAuth = 1;
-            try {
-                user.setUserName(wxUser.getUserName());
-                user.setAvatarUrl(wxUser.getAvatarUrl());
-                user.setTeamName(wxUser.getTeamName());
-                user.setTeamNo(wxUser.getTeamNo());
-                user.setStatus(wxUser.getStatus());
-                user.setIntegral(wxUser.getIntegral());
-                user.setUnionId(wxUser.getUnionId());
-                userServiceExt.update(user);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            user.setUserName(wxUser.getUserName());
+            user.setAvatarUrl(wxUser.getAvatarUrl());
+            user.setTeamName(wxUser.getTeamName());
+            user.setTeamNo(wxUser.getTeamNo());
+            user.setStatus(wxUser.getStatus());
+            user.setIntegral(wxUser.getIntegral());
+            user.setUnionId(wxUser.getUnionId());
+            userServiceExt.update(user);
+            object.put("isAuth", isAuth);
+        } else if (wxUser != null && wxUser.getUnionId() != null && wxUser.getStatus() == Constant.USER_STATUS_ACTIVE && wxUser.getTeamId() == null) {
+            isAuth = 2;
             object.put("isAuth", isAuth);
         } else {
             object.put("isAuth", isAuth);
@@ -163,6 +162,10 @@ public class UserController extends BaseController {
         Assert.notNull(session.getId());
         JSONObject resultObj = new JSONObject();
         String sessionKey = session.getSessionKey();
+        //String sessionKey = "2evMWB3mSHWFsBuoucxTyQ==";
+        logger.info("sessionKey:" + sessionKey);
+        logger.info("encryptedData:" + encryptedData);
+        logger.info("iv:" + iv);
         String startSteps = WechatDecryptDataUtil.decrypt(appId, encryptedData, sessionKey, iv);
         JSONObject object = JSON.parseObject(startSteps);
         JSONArray array = object.getJSONArray("stepInfoList");
@@ -172,15 +175,20 @@ public class UserController extends BaseController {
         JSONObject lastObject = array.getJSONObject(array.size() - 1);
         int step = lastObject.getInteger("step");
         User user = userServiceExt.getById(session.getId());
+        if(user == null) {
+            return sendArgsError("查询不到该用户");
+        }
         String time = DateUtils.getCurrDate("yyyy-MM-dd");
         WalkLog walkLog = walkLogServiceExt.getUserTodayIntegral(user.getId(), DateUtils.getCurrDate("yyyy-MM-dd"));
         if(walkLog == null) {
             WalkLog insertWalkLog = new WalkLog();
             insertWalkLog.setUserId(user.getId());
             insertWalkLog.setUserName(user.getUserName());
-            insertWalkLog.setTeamId(user.getTeamId());
-            insertWalkLog.setTeamName(user.getTeamName());
-            insertWalkLog.setTeamNo(user.getTeamNo());
+            if(user.getTeamId() != null){
+                insertWalkLog.setTeamId(user.getTeamId());
+                insertWalkLog.setTeamName(user.getTeamName());
+                insertWalkLog.setTeamNo(user.getTeamNo());
+            }
             insertWalkLog.setTotalTime(0);
             //根据运动步数计算用户对应积分
             int integral = countUserStepBelogLevel(step);

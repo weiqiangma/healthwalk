@@ -91,7 +91,8 @@ public class WxApiServiceExt {
             String param = "appkey=" + appKey.toLowerCase() +"&nonce=" + nonce + "&timestamp=" + timeStamp +"&sign=" + secretKey.toLowerCase();
             String sign = SecureUtil.md5(param);
 
-            String url = "https://hyxt.nbgh.gov.cn/wechat-console-test/api/public/union/info?unionId=" + unionId;
+            //String url = "https://hyxt.nbgh.gov.cn/wechat-console-test/api/public/union/info?unionId=" + unionId;
+            String url = "https://hyxt.nbgh.gov.cn/wechat-console/api/public/union/info?unionId=" + unionId;
             HttpGet httpGet = new HttpGet(url);
             HttpClient httpClient = HttpClients.createDefault();
             httpGet.setHeader("Content-Type", "application/json");
@@ -111,7 +112,7 @@ public class WxApiServiceExt {
                 String memberUnionName = resultObj.getString("memberUnionName");
                 Integer activeIntegral = resultObj.getInteger("activeIntegral");
                 Integer bindStatus = resultObj.getInteger("bindStatus");
-                log.error("nickName:" + nickName +",memberUnionCode:" + memberUnionCode + ",Integeral:" + activeIntegral.toString() + ",status:" + bindStatus);
+                log.info("nickName:" + nickName +",memberUnionCode:" + memberUnionCode + ",Integeral:" + activeIntegral.toString() + ",status:" + bindStatus);
                 //TODO 测试代码
                 if(!"pro".equalsIgnoreCase(WxApiServiceExt.profilesActive)) {
                     /**
@@ -147,13 +148,29 @@ public class WxApiServiceExt {
                     bindStatus = 1;
                 }
 
-                user.setUnionId(unionId);
-                user.setAvatarUrl(headImg);
-                user.setUserName(nickName);
-                user.setTeamNo(memberUnionCode);
-                user.setTeamName(memberUnionName);
-                user.setIntegral(activeIntegral);
-                user.setStatus(bindStatus);
+                if(unionId != null) {
+                    user.setUnionId(unionId);
+                }
+                if(headImg != null) {
+                    user.setAvatarUrl(headImg);
+                } else {
+                    user.setAvatarUrl("https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3491929439,4106440758&fm=26&gp=0.jpg");
+                }
+                if(nickName != null) {
+                    user.setUserName(nickName);
+                }
+                if(memberUnionCode != null) {
+                    user.setTeamNo(memberUnionCode);
+                }
+                if(memberUnionName != null) {
+                    user.setTeamName(memberUnionName);
+                }
+                if(activeIntegral != null) {
+                    user.setIntegral(activeIntegral);
+                }
+                if(bindStatus != null) {
+                    user.setStatus(bindStatus);
+                }
                 if(StringUtils.isNotEmpty(memberUnionCode)) {
                     if(memberUnionCode.length() == 10) {
                         Team query = new Team();
@@ -163,12 +180,11 @@ public class WxApiServiceExt {
                             Team insertTeam = new Team();
                             String last4Str = memberUnionCode.substring(memberUnionCode.length() -4, memberUnionCode.length());
                             int last4Number = NumberUtils.str2Int(last4Str);
-                            //基层工会
                             if(last4Number > 0) {
                                 //基层工会有上层组织，pid为上层组织id,无上层组织，pid设为-1
                                 Team parentTeam = getParentTeam(memberUnionCode);
                                 if(parentTeam != null) {
-                                    insertTeam.setPid(parentTeam.getPid());
+                                    insertTeam.setPid(parentTeam.getId());
                                 } else {
                                     insertTeam.setPid((long) -1);
                                 }
@@ -181,8 +197,9 @@ public class WxApiServiceExt {
                             insertTeam.setUpdateTime(new Date());
                             teamServiceExt.insert(insertTeam);
                             user.setTeamId(insertTeam.getId());
+                        } else {
+                            user.setTeamId(resultTeam.getId());
                         }
-                        user.setTeamId(resultTeam.getId());
                     } else {
                         //TODO 测试代码
                         if(!"pro".equalsIgnoreCase(WxApiServiceExt.profilesActive)) {
@@ -210,7 +227,8 @@ public class WxApiServiceExt {
             String param = "appkey=" + appKey.toLowerCase() +"&nonce=" + nonce + "&timestamp=" + timeStamp +"&sign=" + secretKey.toLowerCase();
             String sign = SecureUtil.md5(param);
 
-            String url = "https://hyxt.nbgh.gov.cn/wechat-console-test/api/public/union/add/intergral?unionId=" + unionId;
+            //String url = "https://hyxt.nbgh.gov.cn/wechat-console-test/api/public/union/add/intergral?unionId=" + unionId;
+            String url = "https://hyxt.nbgh.gov.cn/wechat-console/api/public/union/add/intergral?unionId=" + unionId;
             HttpPost httpPost = new HttpPost(url);
             HttpClient httpClient = HttpClients.createDefault();
             JSONObject queryObject = new JSONObject();;

@@ -46,7 +46,6 @@ public class LoginController extends BaseController {
         UserQuery query = new UserQuery();
         query.setOpenId(resultData.getOpenId());
         //TODO 测试用
-        //query.setOpenId("ouigu5KOnqQ-3-kJJQLtzb4XdnvU");
         User user = userServiceExt.getByEntity(query);
         if (user == null) {
             User addUser = new User();
@@ -64,7 +63,7 @@ public class LoginController extends BaseController {
         int isAuth = 0;
         if(unionId != null) {
             User appUser = wxApiServiceExt.getUserByUnionId(unionId,user);
-            if(appUser != null && appUser.getUnionId() != null && appUser.getStatus() == Constant.USER_STATUS_ACTIVE) {
+            if(appUser != null && appUser.getStatus() == Constant.USER_STATUS_ACTIVE) {
                 try {
                     isAuth = 1;
                     user.setUserName(appUser.getUserName());
@@ -79,27 +78,15 @@ public class LoginController extends BaseController {
                     e.printStackTrace();
                 }
             }
+        if(appUser != null && appUser.getTeamId() == null) {
+            isAuth = 2;
+        }
         }
         String token = CryptUtils.md5Safe(resultData.getOpenId() + resultData.getSessionKey() + System.currentTimeMillis());
         UserSession session = new UserSession(token, user, resultData.getSessionKey());
         userCacheService.putUserSession(token, session);
         object.put("token", token);
         object.put("isAuth", isAuth);
-        return sendSuccess(object);
-    }
-
-    @RequestMapping("/testLogin")
-    public JsonResult testLogin(Long userId) {
-        User query = new User();
-        query.setId(userId);
-        List<User> userList = userServiceExt.listByEntity(query);
-        User user = userList.get(0);
-        String token = CryptUtils.md5Safe(user.getUserName() + user.getOpenId());
-        UserSession session = new UserSession(token, user, null);
-        userCacheService.putUserSession(token, session);
-        JSONObject object = new JSONObject();
-        object.put("token", token);
-        object.put("user", user);
         return sendSuccess(object);
     }
 }

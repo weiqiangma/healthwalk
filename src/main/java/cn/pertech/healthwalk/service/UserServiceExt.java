@@ -254,7 +254,7 @@ public class UserServiceExt extends UserService {
                 TeamStatVo resultTeamVo = new TeamStatVo();
                 List<Team> childrenList = teamServiceExt.getTeamListByPid(team.getId());
                 if(childrenList.size() > 0) {
-                    List<Long> childrenIdList = childrenList.stream().map(item -> item.getId()).collect(Collectors.toList());
+                    List<Long> childrenIdList = childrenList.stream().map(Team::getId).collect(Collectors.toList());
                     //把父工会id加入idList一并纳入搜索
                     childrenIdList.add(team.getId());
                     resultTeamVo = walkLogDaoExt.getTopTeamStepAndPeoAmount(childrenIdList, query.getTimeStart(), query.getTimeEnd());
@@ -265,10 +265,12 @@ public class UserServiceExt extends UserService {
                     resultTeamVo = walkLogDaoExt.getTopTeamStepAndPeoAmount(childrentList, query.getTimeStart(), query.getTimeEnd());
                     resultStatVos.add(resultTeamVo);
                 }
-                if(user.getTeamId().equals(team.getId())) {
-                    resultTeamVo.setFlag(1);
-                } else {
-                    resultTeamVo.setFlag(0);
+                if(user.getTeamId() != null) {
+                    if (user.getTeamId().equals(team.getId())) {
+                        resultTeamVo.setFlag(1);
+                    } else {
+                        resultTeamVo.setFlag(0);
+                    }
                 }
                 resultTeamVo.setFlag(flag);
                 resultTeamVo.setTeamName(team.getTeamName());
@@ -277,7 +279,11 @@ public class UserServiceExt extends UserService {
         }
         if(query.getKind() != null && query.getKind() == 1) {
             resultStatVos = walkLogDaoExt.getTeamRankList(query);
-            Long a = user.getTeamId();
+            Long a = 0L;
+            if(user.getTeamId() != null) {
+                a = user.getTeamId();
+            }
+
             for(TeamStatVo teamStatVo : resultStatVos) {
                 Long b = teamStatVo.getTeamId();
                 if(a.equals(b)) {
