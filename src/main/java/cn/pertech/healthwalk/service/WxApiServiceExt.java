@@ -15,7 +15,6 @@ import cn.pertech.healthwalk.utils.StringUtils;
 import cn.pertech.healthwalk.utils.WechatDecryptDataUtil;
 import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSONObject;
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import com.xiaoleilu.hutool.crypto.SecureUtil;
 import com.xiaoleilu.hutool.lang.Assert;
 import lombok.extern.slf4j.Slf4j;

@@ -186,7 +186,6 @@ public class UserServiceExt extends UserService {
      */
     public UserStatVo countUserRank(Long userId, String teamNo) {
         UserStatVo resultStatVo = new UserStatVo();
-        Team team = teamServiceExt.getTeamByTeamNo(teamNo);
         String today = DateUtils.getCurrDate("yyyy-MM-dd");
         String yesterday = DateUtils.formatTime(TimeUtils.getLastDay());
         List<UserStatVo> todayStatVos = walkLogDaoExt.countUserRank(userId, today, teamNo);
@@ -216,6 +215,7 @@ public class UserServiceExt extends UserService {
         }
         //团队排名统计
         if(teamNo != null) {
+            Team team = teamServiceExt.getTeamByTeamNo(teamNo);
             StatQuery teamQuery = new StatQuery();
             teamQuery.setTimeStart(new Date());
             teamQuery.setTimeEnd(DateUtils.addDay(new Date(),1));

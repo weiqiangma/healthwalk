@@ -26,6 +26,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.xiaoleilu.hutool.lang.Assert;
+import jodd.util.URLDecoder;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -122,17 +124,14 @@ public class UserController extends BaseController {
         if (user == null) {
             return sendArgsError("查询不到该用户");
         }
-
         String result = WechatDecryptDataUtil.decrypt(appId, encryptedData, session.getSessionKey(), iv);
         JSONObject resultObj = JsonUtils.asJSONObject(result);
-        //TODO 测试用
         String unionId = resultObj.getString("unionId");
-        //unionId = "ocjQ55rFbU0HbpHmFdVDyOi0eEkE";
         if (unionId == null) {
             return sendArgsError("查询unionId失败");
         }
         User wxUser = wxApiServiceExt.getUserByUnionId(unionId, user);
-        if (wxUser != null && wxUser.getUnionId() != null && wxUser.getStatus() == Constant.USER_STATUS_ACTIVE) {
+        if (wxUser.getStatus() == Constant.USER_STATUS_ACTIVE) {
             isAuth = 1;
             user.setUserName(wxUser.getUserName());
             user.setAvatarUrl(wxUser.getAvatarUrl());
@@ -143,7 +142,7 @@ public class UserController extends BaseController {
             user.setUnionId(wxUser.getUnionId());
             userServiceExt.update(user);
             object.put("isAuth", isAuth);
-        } else if (wxUser != null && wxUser.getUnionId() != null && wxUser.getStatus() == Constant.USER_STATUS_ACTIVE && wxUser.getTeamId() == null) {
+        } else if (wxUser.getStatus() == Constant.USER_STATUS_ACTIVE && wxUser.getTeamId() == null) {
             isAuth = 2;
             object.put("isAuth", isAuth);
         } else {
@@ -162,10 +161,7 @@ public class UserController extends BaseController {
         Assert.notNull(session.getId());
         JSONObject resultObj = new JSONObject();
         String sessionKey = session.getSessionKey();
-        //String sessionKey = "2evMWB3mSHWFsBuoucxTyQ==";
-        logger.info("sessionKey:" + sessionKey);
-        logger.info("encryptedData:" + encryptedData);
-        logger.info("iv:" + iv);
+        logger.info("sessionKey:" + sessionKey + "encryptedData:" + encryptedData + "iv:" + iv);
         String startSteps = WechatDecryptDataUtil.decrypt(appId, encryptedData, sessionKey, iv);
         JSONObject object = JSON.parseObject(startSteps);
         JSONArray array = object.getJSONArray("stepInfoList");
@@ -178,7 +174,6 @@ public class UserController extends BaseController {
         if(user == null) {
             return sendArgsError("查询不到该用户");
         }
-        String time = DateUtils.getCurrDate("yyyy-MM-dd");
         WalkLog walkLog = walkLogServiceExt.getUserTodayIntegral(user.getId(), DateUtils.getCurrDate("yyyy-MM-dd"));
         if(walkLog == null) {
             WalkLog insertWalkLog = new WalkLog();
@@ -321,7 +316,7 @@ public class UserController extends BaseController {
      */
     public int countUserStepBelogLevel(Integer currentSteps) {
         List<String> integralList = Arrays.asList(integral_level01, integral_level02);
-        for(int i = 0; i < integralList.size(); i++) {
+        for(int i = 0; i < integralList.size()-1; i++) {
             String last = integralList.get(i);
             String next = integralList.get(i+1);
             String[] lastResultStr = last.split("-");
@@ -339,7 +334,7 @@ public class UserController extends BaseController {
                     return 0;
                 }
             }
-            if(i == integralList.size() - 1) {
+            if(i + 1 == integralList.size() - 1) {
                 if(currentSteps > nextIntegral) {
                     return nextIntegral;
                 }
