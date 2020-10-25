@@ -439,8 +439,8 @@ public static Date getLastDay() {
     }
 
     public static void main(String[] args) throws ParseException {
-        List<String> result = pastDay("2020-10-12");
-        System.out.println(result);
+        Date end = getWeekEnd();
+        System.out.println("");
     }
 
 }
