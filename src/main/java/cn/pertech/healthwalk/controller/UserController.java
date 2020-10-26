@@ -210,7 +210,7 @@ public class UserController extends BaseController {
             walkLog.setIntegral(integral);
             walkLog.setUpdateTime(new Date());
             walkLogServiceExt.update(walkLog);
-            if(StringUtils.isNotEmpty(user.getTeamNo())) {
+            if(StringUtils.isNotEmpty(user.getTeamNo()) && user.getTeamId() != null) {
                 UserStatVo userStatVo = userServiceExt.countUserRank(user.getId(), user.getTeamNo());
                 user.setTodayRank(userStatVo.getTodayRank());
                 user.setTodayStep(userStatVo.getTodayStep());
@@ -229,7 +229,8 @@ public class UserController extends BaseController {
      */
     @RequestMapping("/getRankAndSteps")
     public JsonResult getRankAndSteps(@LoginedAuth UserSession session) {
-        User user = userServiceExt.getById(session.getId());
+        //User user = userServiceExt.getById(session.getId());
+        User user = userServiceExt.getById((long)49);
         if (user == null) {
             return sendArgsError("未查询到该用户");
         }
@@ -239,7 +240,8 @@ public class UserController extends BaseController {
         }
         UserStatVo statVo = userServiceExt.countUserRank(user.getId(), user.getTeamNo());
         List<String> integralList = Arrays.asList(integral_level01, integral_level02);
-        JSONArray integralTakeLog = integralLogServiceExt.getUserTodayIntegralLog(session.getId(), DateUtils.getCurrDate("yyyy-MM-dd"), integralList);
+        //JSONArray integralTakeLog = integralLogServiceExt.getUserTodayIntegralLog(session.getId(), DateUtils.getCurrDate("yyyy-MM-dd"), integralList);
+        JSONArray integralTakeLog = integralLogServiceExt.getUserTodayIntegralLog(session.getId(), "2020-10-23", integralList);
         statVo.setIntegralLog(integralTakeLog);
         statVo.setAvatarUrl(user.getAvatarUrl());
         return sendSuccess(statVo);

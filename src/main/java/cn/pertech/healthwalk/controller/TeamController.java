@@ -37,7 +37,7 @@ public class TeamController extends BaseController {
     private UserServiceExt userServiceExt;
 
     @RequestMapping("/getTeamRank")
-    public JsonResult getTeamRank(@LoginedAuth UserSession session, Integer pageNum, Integer pageSize) {
+    public JsonResult getTeamRank(@LoginedAuth UserSession session, Integer type, Integer pageNum, Integer pageSize) {
         if(pageNum == null) pageNum = 1;
         if(pageSize == null) pageSize = 10;
         User user = new User();

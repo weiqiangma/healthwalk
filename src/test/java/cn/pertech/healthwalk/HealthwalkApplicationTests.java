@@ -1,6 +1,7 @@
 package cn.pertech.healthwalk;
 
 import cn.pertech.common.http.HttpUtils;
+import cn.pertech.common.utils.NumberUtils;
 import cn.pertech.healthwalk.base.entity.Team;
 import cn.pertech.healthwalk.base.entity.User;
 import cn.pertech.healthwalk.service.TeamServiceExt;
@@ -22,6 +23,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootTest
 class HealthwalkApplicationTests {
@@ -55,15 +59,10 @@ class HealthwalkApplicationTests {
     @Test
     void testWalkLog() {
         String appId = "wxe4aef37bfbed6290";
-        String data = "FkRa2zA8wnixkLCxMURV9Qqi7TAbsAdxEVh96SOd322++2fCCKA0BMQwpJaf9n5WQRxbOt1WUM3rVx3lHAWoWHNjlLwGoZe+FIhVWWXUNpTDEATjzr98kFaq5FBkvPYmKHx1lL7NDZ/GfVpghpIokDCWovD7yMMdjkxGsf9Oa8+dIrqALAXj7LG29DmhXCY+YO5BWasZSIq3LaveMaOLGsUV6qbqbEa6be/xnbp/kniroiJ2ZlB7VE7ehT/9HGqNKJubF2j3EsSlAOVyJvfAN9//LO2nkuIWjmD3dioiY1UFcc7Zu63r7g8wgxctflxzvxTOJW9X34geiLXESChyzb0NW91MWBprohyYcDBc2iLo9ipSguwc1UvSnaWPqIV/2t1ZjoGKuUQLZZcQOV2AibcQ07OwcUIKIszLfbQ9LJpgpqnryEwd5jbmIQ++G/Vq8WbN8PeSTZ3c4Ee7NS6+xdHYYAwhSBb1B8m1o9UKxOBKkDXcULFYYlH6xOgBcqO7kRD4MdwqfsgHABnioeqlqoLHsXYcIRBeYgGeP5qNW4sdT4yvSTyElBjPRxEIZ09CRXehN2DJQvFQug3tF2vL5+Y2nqiHJ//zf5EFwDnxvKNVKqha5zaiQg4VwS/z4kzDN5DKOOZUW0VmFjpZlnLUj7KPlS8qEXheFj66E9HlcOU9vR+WNdqBJ/GgvWWALJ640GcwBA2lt5ZEZnFMUK+TLwD8hgt6Qfl9tlHilLBeDB8YBEUPxd+IpdVE3uJvt4l/GVUXwxrBVvFHshteMozVKCHhGONgZ/fakG9hwZBlgESQ+iEZvjdfofYJcn15viYhBxM2oeF3SYVtCYNGXCvxym6s3hbY/IXbBNqqVX7n0t54W8/o1fuE+enc2omMRUqReuWvoow89jplLI3eJ/dgTslUA6IBEk098b/xil+PNkIgLjsQFpkskVqx6QC0FaRfP4qRODRVpyXYu+5bbBpj9bQqDzYXOmKf2/9mnTx060rG4eB8EToukzxDHaNo0qpl26RjswmMnl12gmTHlXvRnCz28IqYoVAl3soxUgHOlZlbnNashj6UWtVC3C7tGxZDpt5O1em2culnuaxpwm0O41DQWSxXi7fq/wi8xcQsGChib+vYbGxQtjONtCVyBoc/XPOdvSBQs8Hp+DVJ0jENHIzoV/2o0fDrcqUtlOY8Cyi7DPMfYiXABYbCt7GKEeI0RR6iRL4RVP2EiQpkNwwNr+2Jrk1Jm6+w+dPglgA9n4pLme13EA79R9GwQsWk7zXZMrkafOirfZM0vcJJHCRGSIB2Wkc1RzEf0ZzKBDZfcyfU7wqR382YmLxKQDEGqmGK8m1pkeMZgjBGCj51tx+M1/YPOd15vdgcd3z5eAuj7keD+l0mmeravRUlYwfbkSC7gCv89KlHiDE53FpdCoLhoYgaXJlXNkykzub0fRxUT1ju43IJ4e5T3orFD+SDEWOX7OKB9EYMd9h+ISmSH5Hkrj+mUZk2UNtpprbbNY8yc5iL3pz2Z3tXdoM4D5Jg6vwM6fgjNBf4Wv4Xkr4StrpLx1wb/30wC4FigC/W9uz9R7h+IK6QYdHkbYcVS9Dit9KNDzgbqlDpoK9jNWIkVO1Ozm7HC503VNl95Jxx+6oZK04YTVy9q+/qNHvW8HwL/po";
-        String iv = "i7SSw5Jnbn7tGthhUwZT2g==";
-        String sessionley="VRCVKj12WAylcnxKLhqqvw==";
+        String data = "A0x4LsiP1zim8MIUhXboXIV8HdjJEm8i7Q6bVnqYn6zp2ljp8OJqVGqyFlLdTD4SE1q4eNmgd74ejHuP1BC/PEJPVsOnjIs7g/Z6AZZLHM3VQwQZl0NmdFHw/08oeDWHzLd+LOtAj9ZHhDrC3BXHzVyT2nsECgBuHMdVf90rqil+3hEtYFxE5pJxqMW+xk3G2n35GkFHs8oLYn98AKcEWbnqSMxL9slElgE/UnJAItQeUHG+zw3Sx/FbIRJWoK6mtGYvpB9pWWhYrs/txBGItLJ/FKphsKoqOW11Fr87ljTxwE9Tl+SDYQLRowjBlrVzc+AoVmHCNWr7uaUN42HLOi6O/iV6copiJ0VP28zs/wY00etdNjJ7Hu+i80pc9482fyEwJ1y+S/210B6oXRQFVHYgihWeTwx5nASJ2KfRbPg0OJEiIq/pYi72/nICeJnOHWucwQOiOtJKPotWtQWe56hs+ypnUcMsXVwlYY6rueNpNBSl8UuPJsLukPiYQQx7xFcD5+KPXDM46/3KU5a82aO3yzYtC8SthZd7inD8i4RlFL1yODgIRIFJWV1XBdF1hjWsmyeM3coOgQco3qPbgR7qk+PYEOd6o4MNgAMqU3c+D/cQTPIoCdN1hGybAuqDfKRONIECJ9nyeMVZV3CnCSNME1zbsb14crD7Gu6VBAkksjX8qXcYXPbk9zUIOoVQVDwY7GMUIuzOIJDwwOjD+DvzcOip+bWYb1xpy9AYmD7J2wQrkqAxYEQ/3KiIdeU9jEwVS8qQbk27MrVRrgw5RKyMM6ibOQXEgZkZd2L6ZWKdygPclOk8vs19GUFLMkGaOfsgQfc9uw8Rdt0sc7UbyriOkoZKyCv8p769aqVllf0RQugN8GzX8tAxiZgSLvzvti0D06VwQ/H9hm0n17B5qyW+VObbY8CVRNy7E+9JlmGSt50tYTA9W+nn/BbqFKsu74THrdSY7NQWRFRE+Ie11opNwe6vWZKXcQ5yS/KvYA/L7YkF+tVS6mG2qQ88j/Gzw1ZtEVlIvWnJxmkBclSuUjeuUajzKeHoLi93s4iAk9rDSSnCCcJBwUw5CCSjVbR2qrN2Xbnzvzx4+fekixkChFcAWPKYmh5xDw4V2C7uEDqWKY77mIZRhx7P6F9IvSWOHe7juw8Hk+tshikbH+w374mGfCqEIrDpnmbQG/i2THEPMiNfiBAO6s0tgWExXrysfMKPGRsOAja3gB6BJVoycVU7i2jbmEUhWYGCvGrJj4zFZ4NweF3xMCaR5tnj0DM9Ujci/iR6YezAnt0NPzV6q7MM2OTa+Qnv4FVbyCE4b5yJ24nYmTMrXXrIGtWpp9Ow1tSYHiXIiNVANM586hBhgDyfhnL11t05o4szNZCQjpilP1d5nY2b/FuZcHSWrGIyrX17MBo13vkqVZFehSzb3iNFjjDAN7MXMQOaqYVu5sj9WsxcavQvFWGwKulggz+M19jL54MkHNu3/8aY1/DcMwtP022UfegKCtQWav0wp6ALstTux6OIMVpZRx7kF6C3TgS01LJ4jYJIKY334LitpZBqNgUwJlEU+rLupuINtUZM9/k9unFPF7Tlupvi1KyS472Cr+cpMEC/nIKiidOzXgtrM7kh6TTXFKkJa4sTJML0cJEESQRFWEFrUy/5oi42";
+        String iv = "ni3RkG2T4IctwLhWGLcgTQ==";
+        String sessionley="QtQFheR7zjMiEVLoVsAScQ==";
         String result = WechatDecryptDataUtil.decrypt(appId, data, sessionley, iv);
-
-        String data2="rIIRTQ76d84BNubon5E4gl65bDq866tYfq6UQJs60MQD99ffg+D+6OaIwC5wKFIhPF8kz/Xa+X/hHM/zqhBnqCHQcCGrKTCg9TXQVDxJjiyCVtYiAc2ffFqYpoJrQ9hYWAcaURu2rEpeSBv+WVPOGtyB+8TZaiB+hErkx7Kw+kw54z+kmwAbE8/mQkS74rOCyrhJriPUnhWfVzCluLcesrvDe0R7ppea/HCmH60h5NniXr+mEFS+8O2HvKpzoK/LhM+i+muB1yy4BQqBPKirwHgMdn3cApXB8C0zYm4KQrnKdf1V5nEwWVxWKWjhx4q9CyYPdBQpv//4oXtkCijyItgRg18M1Oo037flTgXyhUNKUp5B9GLbyX2mU/O6EbLB2lbdNXkBiEpwPidqGiKasHk7fXsSPUNc6/ZVQGKkmtt8RgKEhNRnxUL6FWF54jt5UcHCqrz/YN4aOS1zR7WoMMZh0fwepCeqdYqzZiDnyxXvOzOKnJEgI6xXVnD8yowayFaKcWiKSRCIfEAtWS5qlTcPrF3k7DwVe7WL+hj0MajYdrEXhDlj7Vgd+zypxtmNOpth/VQ2EjimzxSqIOqkmVdESkw1felm1mabZMY7lCys+ivvrodnTBfKgpP2J6DN9+KgSSZ7v457u16ouIuHnO8lII3Nir0jA7k2e3VAlBZ5E8b3wScJruvhwhhgUcZjO0+m2FKXWhODPvRWL6YyMFMlRqjd2F3aEYcmo5oxS6Lr9EJWy3SyzYCJBowSLtOWWUCVpdsp106pzDm7Ik8BPrRqyLYSn/PZrS2eeXfq1U/8I5sl/TirVjGhhB7b2UX9u0QsykAIIkqAV0jj5PGekigx6JAUTO3srpiqDzA4/10ujD4c81NbIfZ2NM88YDpQO33olfTC8TppzlTfQkibAAHw9Ztix+Xh5AL0fDN9dew3SjBAeMz90YkO2nyCLXx7pZIR3hOkSa/L/JRGB4/faLOhyjPIQu0fNkZFu2EyqbZ393SEjH1e3clqLEBMwNajyQ564TaqLlkUAQRZXOcrc8nNhmunvwIaHTvBH3tLk2nuhstm066RQM/3CpqWbSeKConCyt+W8Qd+SrQH8Ty3SGRg80QGLDicxsc5y6JndrR41y+WkgroFhRcHf5iXzLZxcCEQaOg5e2+QaqHAXIwbYJgaA7SOflJXX701eyYM7mx0Z5YqV+j7rmw3j4k0r0Yg98tWMYcVU9RZA9TRAmCU1PH4GI5x5wsYKFky3ax0a0PyZ7lmsuBpqsQBW8tO1sqN2TGwsNGsezva8XRjaJ2LXS3cC5Gy7NheWiwoqMay15GyNMU+KFdHgBjyXE0PIhSQIvCjKcdPD9g3E95KaKDKs+kFwNLCByJUGaQhqTL+RwVOl8KbQFw2P5GikqPhhj7J0/yuzfwpZK7NKV73GBEG+rojQoqn1Hc0XBWhPUVFqCGd1dtccNuUBf6jr2HyDesXYM2svXfIktEbXAtrN5qxwAE8qY9bOGmzTqSPrfHJ9XuSmpV1zE6RnMG5I0uhzXoynumBNNrUM15Ig7jZ9eUGd/3b0FmyfvgHLgjCFBeSkSx3lBs0tX6Bz0I7hm26boZdx1LPeq5ub7T6c1LyDjD2ElVJE5FIXZgMeD0ML7jrlwVMDcAhWDuy4XgozffE4wI";
-        String iv2="fqhScVTc/axCvmzI8/UAZg==";
-        String sessionley2="VRCVKj12WAylcnxKLhqqvw==";
-        String result2=WechatDecryptDataUtil.decrypt(appId, data2, sessionley2, iv2);
         System.out.println(result);
     }
 
@@ -107,6 +106,45 @@ class HealthwalkApplicationTests {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    void testGetUserRank() {
+        int  result = countUserStepBelogLevel(10001);
+        System.out.println(result);
+    }
+
+    public int countUserStepBelogLevel(Integer currentSteps) {
+        List<String> integralList = Arrays.asList("5000-5", "10000-5");
+        for(int i = 0; i < integralList.size()-1; i++) {
+            String last = integralList.get(i);
+            String next = integralList.get(i+1);
+            String[] lastResultStr = last.split("-");
+            String[] nextResultStr = next.split("-");
+            String lastStepsStr = lastResultStr[0];
+            String lastIntegralStr = lastResultStr[1];
+            String nextStepStr = nextResultStr[0];
+            String nextIntegralStr = nextResultStr[1];
+            int lastSteps = NumberUtils.str2Int(lastStepsStr);
+            int lastIntegral = NumberUtils.str2Int(lastIntegralStr);
+            int nextSteps = NumberUtils.str2Int(nextStepStr);
+            int nextIntegral = NumberUtils.str2Int(nextIntegralStr);
+            if(i == 0) {
+                if(currentSteps < lastSteps) {
+                    return 0;
+                }
+            }
+            if(i + 1 == integralList.size() - 1) {
+                if(currentSteps > nextIntegral) {
+                    return nextIntegral;
+                }
+            }
+            if(currentSteps > lastSteps && currentSteps <= nextSteps) {
+                return lastIntegral;
+            }
+
+        }
+        return 0;
     }
 
 }
